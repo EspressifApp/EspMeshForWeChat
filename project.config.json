@@ -14,7 +14,7 @@
 	},
 	"compileType": "miniprogram",
 	"libVersion": "2.6.6",
-	"appid": "wxafe0da83b9ce909c",
+	"appid": "",
 	"projectname": "esp-mesh",
 	"debugOptions": {
 		"hidedInDevtools": []
