@@ -1,0 +1,100 @@
+<view class="container">
+  <view class='select-wrapper'>
+  <view class="input-info">
+    <view class='input-group'>
+      <view bindtap='showFilter' class="cell-down">
+        <text class="iconfont icon-down {{isfilter ? 'active-down' : ''}}"></text>
+      </view>
+      <input type="search" placeholder-class="input-placeholder" class="form-control search-input" bindinput="bindViewSearch" placeholder="搜索名称或位置"/>
+    </view>
+  </view>
+  
+  <view class='item-select flex flex-jce flex-ac'>
+    <view bindtap='selectAll' class="item-radio {{selected == searchList.length ? 'active' : ''}}">
+      <view class="item-radio-sub"></view>
+    </view>
+  </view>
+  </view>
+  <view class="filter-content">
+    <view class="filter-info {{isfilter ? 'filter-show' : ''}}">
+      <view class="filter-item flex flex-ac">
+        <text class="flex-30">
+          <text class="iconfont icon-rss filter-icon"></text>
+        </text>
+        <view class="flex-1 flex flex-ac">
+          <text class="flex-30">RSSI:</text>
+          <view class="flex-1">
+            <slider bindchange="sliderChange" block-size="26" bindchanging="sliderChanging" backgroundColor="#999" activeColor="#3ec2fc" min="-120" max="-40" value="{{rssiValue}}" />
+          </view>
+        </view>
+        <text class="flex-30 filter-value">{{rssiValue}}</text>
+      </view>
+      <view class="filter-item flex flex-ac">
+        <text class="flex-30">
+          <text class="iconfont icon-mark filter-icon {{isSave? 'color-red': ''}}"></text>
+        </text>
+        <view class="flex-1">只显示收藏的</view>
+        <text bindtap='showSave' class="flex-30 filter-value">
+          <text class="iconfont icon-check filter-icon  {{isSave? 'color-blue': ''}}"></text>
+        </text>
+      </view>
+    </view>
+  </view>
+  <view class="content {{isfilter? 'change-content': ''}}" >
+    <view data-index="{{index}}" bindtap='bindViewSelect'  wx:for="{{searchList}}" class="item" wx:key="*this">
+      <view catchtap='saveMac' data-mac="{{item.mac}}" class="item-img">
+       <text class='iconfont {{item.icon}}' mode='aspectFit'></text>
+       <text hidden="{{!item.isSave}}" class="item-mark"><text class="iconfont icon-mark font12"></text></text>
+      </view>
+      <view class="item-name">
+        <text class="text-name">{{item.name}}</text>
+        <text space="nbsp" class="text-rssi">Mac: {{item.bssid}}   Rssi: {{item.RSSI}}</text>
+      </view>
+      <view class="item-power-radio flex flex-jce flex-ac">
+        <view class="item-radio {{item.active ? 'active' : ''}}">
+        <view class="item-radio-sub"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class='btn-wrapper'>
+    <button bindtap='bindViewConnect' class="btn {{selected > 0 ? '': 'disabled'}}">{{btnTitle}}</button>
+  </view>
+  <view catchtap='showProblem' class="problem-desc"><text class="iconfont icon-problem1"></text>没有搜索到我想要添加的设备？</view>
+  <view hidden="{{!isProblem}}" class="operate-wrapper">
+    <view catchtap='hideProblem' class="mask"></view>
+    <view class="problem-content">
+      <view class="header flex flex-ac">
+        <view class="problem-blue flex-1">
+          <view class="problem-round flex flex-ac flex-jcc">
+            <text class="iconfont icon-mobile outer-icon">
+              <text class="iconfont icon-bluetooth inner-icon"></text>
+            </text>
+          </view>
+          <text class="problem-blue-desc">蓝牙已开启</text>
+        </view>
+        <view class="problem-line flex-1">
+          <text class="line-desc flex flex-ac"><text class="iconfont icon-position"></text>距离20米以内</text>
+          <text class="line"></text>
+        </view>
+        <view class="problem-light flex-1">
+          <view class="problem-round flex flex-ac flex-jcc">
+            <text class="iconfont icon-light">
+            </text>
+          </view>
+        </view>
+      </view>
+      <view class="content-info">
+        <view class="info-header">添加设备时，请检查以下选项：</view>
+        <view class="info-desc">1. 设备已供电并处于待添加状态</view>
+        <view class="info-desc">2. 需要添加的设备未被其他手机添加</view>
+        <view class="info-desc">3. 尽量靠近设备,建议不超过20米</view>
+        <view class="info-desc">4. 设备没有损坏</view>
+        <view class="info-desc">5. 系统蓝牙故障(<text class="color-red">需重启</text>)</view>
+      </view>
+      <view class="btn-wrapper">
+        <button catchtap='hideProblem' class='btn'>我知道了</button>
+      </view>
+    </view>
+  </view>
+</view>

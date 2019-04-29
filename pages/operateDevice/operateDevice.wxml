@@ -1,0 +1,35 @@
+<import src="/pages/template/template.wxml"/>
+<view class="container">
+  <view class="header-wrapper">
+    <view class="header-icon">
+      <text style="color: {{color}}" class="iconfont icon-light font40"></text>
+    </view>
+    <view class="header-btn-wrapper">
+      <button catchtap="closeDevice" class="header-btn {{!isActive ? 'active' : ''}}">关闭</button>
+      <button catchtap="openDevice" class="header-btn  {{isActive ? 'active' : ''}}">开启</button>
+    </view>
+  </view>
+  <view class="multicolor">
+    <view class="color-wrapper">
+      <view bindtap='selectColor' data-index="{{index}}" class="color-info" wx:for="{{list}}" wx:key="*this">
+        <view class="color-round" style="background: {{item.color}}">
+          <text hidden="{{colorIndex != index}}" class="iconfont icon-yes font26 activeYes"></text>
+        </view>
+        <text class="textcenter">{{item.name}}</text>
+        
+      </view>
+      <view catchtap="changPicker" class="color-info">
+        <view class="color-round {{isColor ? 'color-picker-cold' : 'color-picker-round'}}" ><text class="iconfont icon-loop font30"></text></view>
+        <text class="textcenter"></text>
+      </view>
+    </view>
+    <view class="canvas-wrapper">
+      <canvas id="{{id}}"  canvas-id="{{id}}"></canvas>
+      <canvas class="move" bindtouchstart="getColor"  bindtouchmove='getColor' bindtouchend="setDeviceColor" id="{{sliderId}}"  canvas-id="{{sliderId}}"></canvas>
+    </view>
+    <view class="canvas-wrapper">
+      <canvas id="{{colorId}}"  canvas-id="{{colorId}}"></canvas>
+      <canvas class="move" bindtouchstart="getLColor" bindtouchend="setDeviceLColor" bindtouchmove='getLColor' id="{{sliderColorId}}"  canvas-id="{{sliderColorId}}"></canvas>
+    </view>
+  </view>
+</view>

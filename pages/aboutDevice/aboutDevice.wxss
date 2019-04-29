@@ -1,0 +1,45 @@
+.container {
+  height: 100vh;
+  padding: 0 0 15px;
+  overflow-y: auto;
+}
+.icon-content {
+	width: 90px;
+	height: 90px;
+	margin: 30px auto 10px;
+	border: 1px solid #e6e6e6;
+	border-radius: 100%;
+	line-height: 90px;
+	font-size: 45px;
+	text-align: center;
+	background: #fff;
+	color: #3ec2fc;
+}
+.icon-name {
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+	color: #000;
+}
+.about-content {
+	margin-top: 30px;
+	background: #fff;
+}
+.about-item {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	height: 50px;
+	border-bottom: 1px solid #e6e6e6;
+	color: #3f3f3f;
+}
+.about-item-label {
+	flex: 0 0 120px;
+	width: 120px;
+	padding-left: 20px;
+	box-sizing: border-box;
+}
+.about-item-name {
+	flex: 1;
+	color: #858585;
+}

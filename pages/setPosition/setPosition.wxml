@@ -1,0 +1,45 @@
+<!--pages/setPosition/setPosition.wxml-->
+<view class="container">
+  <view class="pair">
+    <view class="pair-title">楼层</view>
+    <view class="pair-input">
+      <input bindinput='bindViewFloor' class='form-control' value="{{floor}}"></input>
+    </view>
+    <view class="pair-icon">
+      <picker bindchange="bindFloorChange" value="{{floorIndex}}" range="{{floorArray}}">
+    <text class="iconfont icon-down"></text>
+  </picker>
+    </view>
+  </view>
+  <view class="pair">
+    <view class="pair-title">区域</view>
+    <view class="pair-input">
+      <input bindinput='bindViewArea'  class='form-control' value="{{area}}"></input>
+    </view>
+    <view class="pair-icon">
+      <picker bindchange="bindAreaChange" value="{{areaIndex}}" range="{{areaArray}}">
+    <text class="iconfont icon-down"></text>
+  </picker>
+    </view>
+  </view>
+  <view class="pair">
+    <view class="pair-title">编号</view>
+    <view class="pair-input">
+      <input bindinput='bindViewCode' class='form-control' value="{{code}}"></input>
+    </view>
+    <view class="pair-icon">
+    </view>
+  </view>
+  <view class="pair">
+    <view class="pair-title">MAC</view>
+    <view class="pair-input">
+      <input bindinput='bindViewMac' class='form-control' disabled="{{flag}}" value="{{mac}}"></input>
+    </view>
+    <view hidden='{{flag}}' class="pair-icon">
+      <text catchtap="qrCode" class="iconfont icon-QRCode"></text>
+    </view>
+  </view>
+  <view class='btn-wrapper'>
+    <button catchtap='savePosition' class="btn">{{btnTitle}}</button>
+  </view>
+</view>

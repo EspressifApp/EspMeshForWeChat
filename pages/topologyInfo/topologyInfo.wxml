@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="topology-item flex flex-ac flex-jcb" wx:key="" wx:for="{{topologyInfo}}">
+    <view>{{item.key}}:</view>
+    <view>{{item.value}}</view>
+  </view>
+</view>

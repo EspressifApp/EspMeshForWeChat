@@ -1,0 +1,14 @@
+/* pages/automationDevices/automationDevices.wxss */
+.container {
+  height: 100vh;
+  padding: 0;
+}
+.content {
+  height: calc(100% - 120rpx);
+  margin: 0;
+}
+.item-power {
+  flex: 0 0 50rpx;
+  height: 130rpx;
+  justify-content: flex-end;
+}

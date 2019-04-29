@@ -1,0 +1,3 @@
+<view class="container">
+  <video id="myVideo" src="{{videoUrl}}" controls></video>
+</view>

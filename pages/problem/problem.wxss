@@ -1,0 +1,65 @@
+.container {
+  padding: 0;
+}
+.section-wrapper {
+  padding: 0 30rpx;
+  background: #fff;
+}
+.form-textarea {
+  height: 400rpx;
+  padding: 20rpx;
+  background: #f6f6f6;
+  border-radius: 10rpx;
+}
+.btn-wrapper {
+  position: absolute;
+  bottom: 30rpx;
+  left: 30rpx;
+  width: calc(100% - 60rpx);
+}
+.section {
+  padding: 10rpx 0 40rpx;
+  border-bottom: 1px solid #f6f6f6;
+}
+.section-desc {
+  padding: 26rpx 0;
+}
+.section-btn {
+  display: flex;
+}
+.btn-desc {
+  position: relative;
+  width: 190rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  border-radius: 20px;
+  padding: 0;
+  text-align: center;
+  font-size: 28rpx;
+  background: transparent;
+  margin-right: 30rpx;
+  border: 1px solid #f6f6f6;
+  transition: all .3s linear;
+}
+.pair {
+  display: flex;
+  margin-top: 30rpx;
+  align-items: center;
+  padding-left: 30rpx;
+  height: 100rpx;
+  background: #fff;
+}
+.pair-title {
+  flex: 0 0 170rpx;
+  width: 170rpx;
+}
+.pair-input {
+  flex: 1;
+}
+.form-control {
+  width: 100%;
+}
+.active {
+  border-color: #3ec2fc;
+  color: #3ec2fc;
+}

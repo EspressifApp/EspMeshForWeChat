@@ -1,0 +1,12 @@
+.container {
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+  overflow-y: auto;
+}
+.topology-item {
+  height: 100rpx;
+  padding: 0 30rpx;
+  border-bottom: 1px solid rgba(0, 0, 0, .2);
+  box-sizing: border-box;
+}

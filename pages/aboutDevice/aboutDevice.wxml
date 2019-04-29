@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="about-icon">
+    <view class="icon-content">
+      <text class="iconfont icon-light"></text>
+    </view>
+    <view class="icon-name">
+        {{deviceInfo.name}}
+    </view>
+  </view>
+  <view class="about-content">
+    <view class="about-item">
+      <view class="about-item-label">设备类型</view>
+      <view class="about-item-name">{{deviceType}}</view>
+    </view>
+    <view class="about-item">
+      <view class="about-item-label">MAC 地址</view>
+      <view class="about-item-name">{{deviceInfo.mac}}</view>
+    </view>
+    <view class="about-item">
+      <view class="about-item-label">设备版本</view>
+      <view class="about-item-name">{{deviceInfo.version}}</view>
+    </view>
+    <view class="about-item">
+      <view class="about-item-label">Mdf版本</view>
+      <view class="about-item-name">{{deviceInfo.mdf_version}}</view>
+    </view>
+    <view class="about-item">
+      <view class="about-item-label">Idf版本</view>
+      <view class="about-item-name">{{deviceInfo.idf_version}}</view>
+    </view>
+    <view class="about-item">
+      <view class="about-item-label">设备状态</view>
+      <view class="about-item-name">{{deviceStatus}}</view>
+    </view>
+    <view class="about-item">
+      <view class="about-item-label">设备IP</view>
+      <view class="about-item-name">{{deviceInfo.ip}}</view>
+    </view>
+  </view>
+</view>

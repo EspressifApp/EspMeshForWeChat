@@ -1,0 +1,28 @@
+<view class="container">
+  <view class="panel-wrapper" wx:for="{{attrList}}">
+    <view class="panel-header flex flex-jcb">
+      <text class="panel-title">{{item.name}}</text>
+      <text class="blueColor">{{item.value}}</text>
+    </view>
+    <view class="panel-content">
+      <view class="panel-silder">
+        <slider data-index="{{index}}" bindchange="bindViewChange" bindchanging="bindViewInput" step="{{item.step}}" value="{{item.value}}" min="{{item.min}}" max="{{item.max}}" disabled="{{!item.isShow}}" activeColor="#e9e9e9"  block-size="26"/>
+      </view>
+      <view class="panel-num flex flex-jcb">
+        <text>{{item.min}}</text>
+        <text>{{item.max}}</text>
+      </view>
+    </view>
+    <view hidden="{{!item.isShow}}" class="panel-footer flex">
+      <view class="flex-1">
+        <input data-index="{{index}}" bindinput="bindViewInput" value="{{item.value}}" class="panel-input"/>
+      </view>
+      <view catchtap="reset" class="flex-50 textcenter">
+        <text class="iconfont icon-loop"></text>
+      </view>
+      <view data-index="{{index}}" catchtap="send" class="flex-50 textcenter">
+        <text class="iconfont icon-send"></text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,34 @@
+<import src="/pages/template/template.wxml"/>
+<view class="container">
+  <view hidden='{{showAddPosition}}'  class="input-info">
+    <view class='input-group'>
+      配对列表({{positionList.length}})
+    </view>
+    <view bindtap="addPostion" class="input-plus">
+      <text class="iconfont icon-plus"></text>
+    </view>
+  </view>
+  <view class="content">
+    <view>
+      <view data-index="{{index}}" wx:for="{{positionList}}" class="item  {{item.isTouchMove ? 'touch-move-active' : ''}}" bindtouchstart="touchstart" bindtouchmove="touchmove" bindtouchend='touchend' wx:key="{{item.mac}}">
+        <view class="touch-item">
+          <view class="item-img item-bg">
+            <text class="bluetooth-img iconfont icon-light"></text>
+          </view>
+          <view class="item-name">
+            <text class="text-name">{{item.floor}}-{{item.area}}-{{item.code}}</text>
+            <text class="text-rssi">MAC: {{item.mac}}</text>
+          </view>
+        </view>
+        <view class="del" catchtap="del" data-index="{{index}}">删除</view>
+      </view>
+    </view>
+    <view hidden='{{!showAddPosition}}' class="add-wrapper">
+      <view class="add-title">添加配对</view>
+      <view class="add-desc">所有添加的配对信息将集中显示在这个列表</view>
+      <view  class="add-plus" catchtap="addPostion">
+          <text class="iconfont icon-plus"></text>
+      </view>
+    </view>
+  </view>
+</view>

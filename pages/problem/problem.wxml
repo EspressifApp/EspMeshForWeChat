@@ -1,0 +1,26 @@
+<!--pages/ota/ota.wxml-->
+<view class="container">
+  <view class="section-wrapper">
+    <view class="section">
+      <view class="section-desc">你想反馈的意见类型</view>
+      <view class="section-btn">
+        <view catchtap='selectType' data-type="设备问题" class="btn-desc {{problemType == '设备问题' ? 'active' : ''}}">设备问题</view>
+        <view catchtap='selectType' data-type="技能问题" class="btn-desc {{problemType == '技能问题' ? 'active' : ''}}">技能问题</view>
+        <view catchtap='selectType' data-type="APP问题" class="btn-desc {{problemType == 'APP问题' ? 'active' : ''}}">APP问题</view>
+      </view>
+    </view>
+    <view class="section">
+      <view class="section-desc">你想反馈的意见描述</view>
+      <textarea bindinput="bindViewText" placeholder="描述您的问题或意见，我们会第一时间回复您，你的反馈意见有助于我们的提升" class="form-control form-textarea" value="{{problemDesc}}" placeholder-class="input-placeholder"/>
+    </view>
+  </view>
+  <view class="pair">
+    <view class="pair-title">手机/邮箱</view>
+    <view class="pair-input">
+      <input bindinput='bindViewEmail' class='form-control' value="{{problemEmail}}"></input>
+    </view>
+  </view>
+  <view class='btn-wrapper'>
+    <button bindtap='sendProblem' class="btn">确定</button>
+  </view>
+</view>

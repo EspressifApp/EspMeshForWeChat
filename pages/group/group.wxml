@@ -1,0 +1,79 @@
+<import src="/pages/template/template.wxml"/>
+<view class="container">
+  <view hidden='{{isSelect}}' class="input-info">
+    <view class='input-group'>
+      <text class="iconfont icon-search"></text>
+      <input type="search" placeholder-class="input-placeholder" class="form-control search-input" bindinput="bindViewSearch" placeholder="搜索群组名称"/>
+    </view>
+    <view catchtap="showAddGroup" class="input-plus">
+      <text class="iconfont icon-plus"></text>
+    </view>
+  </view>
+  <view hidden='{{searchList.length == 0}}'>
+      <view hidden="{{item.is_user && item.count == 0}}" data-index="{{index}}" wx:for="{{searchList}}" class="item" bindtap='showInfo' bindlongpress="showOperate" wx:key="{{item.id}}">
+        <view class="item-img">
+        <text class="bluetooth-img iconfont icon-group"></text>
+          <text class="item-num">{{item.count}}</text>
+        </view>
+        <view class="item-name">
+          <text class="text-name">{{item.name}}</text>
+        </view>
+        <view class="item-power">
+          <view hidden='{{!item.isLight}}' class="switch-wrapper">
+              <text data-index="{{index}}" class="{{!item.active ? 'active' : ''}}" catchtap="closeGroup">OFF</text>
+              <text data-index="{{index}}" class="{{item.active ? 'active' : ''}}" catchtap="openGroup">ON</text>
+          </view>
+        </view>
+      </view>
+    </view>
+</view>
+<view hidden="{{isAddGroup}}">
+  <template is="editInfo"  data="{{...addData}}"/>
+</view>
+<view hidden="{{isEditGroup}}">
+  <template is="editInfo"  data="{{...editData}}"/>
+</view>
+<view hidden="{{!isCommand}}">
+  <template is="command" data="{{...commandData}}"/>
+</view>
+<view>
+  <view class="operate-wrapper  {{isOperate ? 'moves-enter-active' : 'moves-enter'}}">
+    <view bindtap='hideOperate' class="mask"></view>
+    <view class="operate-info">
+      <view class="operate-name">
+        <view class="operate-icon-wrapper"><text class="bluetooth-img iconfont icon-group operate-icon"></text>{{groupInfo.name}}</view>
+        <view hidden='{{!groupInfo.isLight}}'  class="item-power">
+          <view class="switch-wrapper">
+                  <text data-macs="{{groupIndex.device_macs}}" data-index="{{groupIndex}}" class="{{!groupInfo.active ? 'active' : ''}}" catchtap="closeGroup">OFF</text>
+                  <text data-macs="{{groupIndex.device_macs}}" data-index="{{groupIndex}}" class="{{groupInfo.active ? 'active' : ''}}" catchtap="openGroup">ON</text>
+          </view>
+        </view>
+      </view>
+      <view catchtap='showEditName' class="operate-item">
+        <view>编辑名称</view>
+      </view>
+      <view catchtap='delGroup' class="operate-item">
+        <view class='icon-orange'>解散群组</view>
+      </view>
+      <view catchtap='delDevice' class="operate-item">
+        <view class='icon-orange'>重置设备</view>
+      </view>
+      <view catchtap='editGroup' class="operate-item">
+        <view>编辑群组</view>
+      </view>
+      <view catchtap="joinMesh" class="operate-item">
+        <view>加入网络</view>
+      </view>
+      <view catchtap="showOTA" class="operate-item">
+        <view>固件升级</view>
+      </view>
+      <view catchtap='showCommand' class="operate-item">
+        <view>发送命令</view>
+      </view>
+      <view catchtap='hideOperate' class="operate-item margintop15">
+        <view>取消</view>
+      </view>
+    </view>
+  </view>
+</view>
+<template is="footer"  data="{{text: 'group'}}"/>

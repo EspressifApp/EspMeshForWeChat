@@ -1,0 +1,26 @@
+<view class="container">
+  <view class="input-info">
+    <view class='input-group'>
+      <text class="iconfont icon-search"></text>
+      <input type="search" placeholder-class="input-placeholder" class="form-control search-input" bindinput="bindViewSearch" placeholder="搜索名称或位置"/>
+    </view>
+  </view>
+  <view class="content">
+    <view data-index="{{index}}" wx:for="{{searchList}}" class="item" bindtap='automation' wx:key="{{item.mac}}">
+      <view class="item-img item-bg">
+      <text class="bluetooth-img iconfont {{item.icon}}" style="color: {{item.rgb}}"></text>
+      </view>
+      <view class="item-name" hidden="{{!item.position == ''}}">
+        <text class="text-name">{{item.name}}</text>
+        <text class="text-rssi">{{item.version}}</text>
+      </view>
+      <view class="item-name" hidden="{{item.position == ''}}">
+        <text class="text-name">{{item.position}}</text>
+        <text class="text-rssi">{{item.name}}({{item.version}})</text>
+      </view>
+      <view class="item-power">
+        <text class="iconfont icon-right font-lg"></text>
+      </view>
+    </view>
+  </view>
+</view>

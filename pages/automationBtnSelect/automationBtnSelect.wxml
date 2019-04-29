@@ -1,0 +1,26 @@
+<!--pages/automationBtnSelect/automationBtnSelect.wxml-->
+<view class="container">
+  <view catchtap="selected" data-index="1" class="item">
+      <view class="item-name">
+        <text class="text-name">控制一组设备</text>
+      </view>
+      <view class="item-power-radio flex flex-jce flex-ac">
+        <view class="item-radio {{newEventType == 1 ? 'active' : ''}}">
+        <view class="item-radio-sub"></view>
+        </view>
+      </view>
+    </view>
+    <view catchtap="selected" data-index="2" class="item">
+      <view class="item-name">
+        <text class="text-name">控制多组设备</text>
+      </view>
+      <view class="item-power-radio flex flex-jce flex-ac">
+        <view class="item-radio {{newEventType == 2 ? 'active' : ''}}">
+        <view class="item-radio-sub"></view>
+        </view>
+      </view>
+    </view>
+    <view class='btn-wrapper'>
+    <button bindtap='next' class="btn {{isSelect != -1 ? '': 'disabled'}}">下一步</button>
+  </view>
+</view>

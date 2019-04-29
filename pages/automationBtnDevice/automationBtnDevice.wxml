@@ -1,0 +1,29 @@
+<view class="container">
+  <view class='item select-wrapper'>
+  <view class='item-name select-title'>选择设备({{selected}}/{{deviceList.length}})</view>
+  <view class='item-select flex flex-jce flex-ac'>
+    <view bindtap='selectAll' class="item-radio {{selected == deviceList.length ? 'active' : ''}}">
+      <view class="item-radio-sub"></view>
+    </view>
+  </view>
+  </view>
+  <view class="content">
+    <view data-index="{{index}}" bindtap='bindViewSelect'  wx:for="{{deviceList}}" class="item" wx:key="*this">
+      <view class="item-img">
+       <text class='bluetooth-img iconfont icon-light' mode='aspectFit'></text>
+      </view>
+      <view class="item-name">
+        <text class="text-name">{{item.name}}</text>
+        <text class="text-rssi">{{item.version}}</text>
+      </view>
+      <view class="item-power-radio flex flex-jce flex-ac">
+        <view class="item-radio {{item.active ? 'active' : ''}}">
+        <view class="item-radio-sub"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class='btn-wrapper'>
+    <button bindtap='save' class="btn">确定</button>
+  </view>
+</view>

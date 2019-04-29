@@ -1,0 +1,10 @@
+.container {
+  padding: 0;
+}
+.btn-wrapper {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0 30rpx;
+  box-sizing: border-box;
+}

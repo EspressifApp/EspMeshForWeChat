@@ -1,0 +1,2 @@
+/* pages/automation/automation.wxss */
+@import "/pages/blueDevices/blueDevices.wxss";

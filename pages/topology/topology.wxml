@@ -1,0 +1,7 @@
+<!--index.wxml-->
+<view class="container">
+  <view hidden="{{titleList.length < 2}}" class="tab-wrapper flex flex-ac flex-jcc">
+    <view catchtap="selectMeshId" data-value="{{item}}" wx:key="*this" wx:for="{{titleList}}" class="flex-1 tab-info {{selected == item ? 'active': ''}}">{{item}}</view>
+  </view>
+  <ec-canvas id="mychart-dom-area" canvas-id="mychart-area" ec="{{ ec }}"></ec-canvas>
+</view>

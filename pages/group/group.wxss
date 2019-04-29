@@ -1,0 +1,18 @@
+.container {
+  padding: 0;
+  min-height: 100vh;
+  background: #f6f6f6;
+}
+.item-img {
+  position: relative;
+  border-radius: 100%;
+	border: 1px solid #e6e6e6;
+	justify-content: center;
+	align-items: center;
+	background: #ededed;
+	box-shadow: 0px 0px 2px #e6e6e6;
+}
+.item-img .iconfont {
+  font-size:52rpx;
+  color: #6b6b6b;
+}

@@ -1,0 +1,135 @@
+.container {
+  padding: 0;
+  height: 100%;
+}
+movable-area {
+  height: 100%;
+  width: 100%;
+}
+movable-view {
+  height: 100%;
+  width: 100%;
+  padding: 30rpx;
+  box-sizing: border-box;
+  background: #fff;
+}
+.button-model {
+  width: 50vw;
+  height: 50vw;
+  min-height: 340rpx;
+  min-width: 340rpx;
+  max-height: 500rpx;
+  max-width: 500rpx;
+  margin: 40rpx auto;
+  padding: 10rpx 0;
+  background: #fff;
+  border-radius: 100rpx;
+  box-shadow: 0px 0px 15px rgb(217, 217, 217);
+  box-sizing: border-box;
+}
+.btn-content {
+  position: relative;
+}
+.num {
+	position: absolute;
+	right: 20rpx;
+	top: 10rpx;
+	width: 50rpx;
+	height: 50rpx;
+  line-height: 50rpx;
+  text-align: center;
+	border-radius: 100%;
+	background: #3ec2fc;
+  font-size: 22rpx;
+	color: #fff;
+	
+}
+.model-round {
+  height: 16vw;
+  min-height: 100rpx;
+  max-height: 160rpx;
+	width: 16vw;
+  min-width: 100rpx;
+  max-width: 160rpx;
+	box-shadow: 0px 0px 15px #9c9c9c;
+	border-radius: 100%;
+	font-size: 18px;
+	transition: all .2s linear;
+}
+.panel {
+  margin-bottom: 40rpx;
+  background: #fff;
+}
+.panel-header {
+  font-size: 32rpx;
+  font-weight: bold;
+  padding: 20rpx;
+  border-bottom: 1px solid #e1e1e1;
+}
+.panel-content {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.panel-li {
+  flex: 0 0 25%;
+	max-width: 25%;
+	position: relative;
+	width: 25%;
+	text-align: center;
+	
+	border-bottom: 1px solid #e1e1e1;
+	border-right: 1px solid #e1e1e1;
+	box-sizing: border-box;
+	background: #fff;
+}
+.panel-li-info {
+  height: 100%;
+  width: 100%;
+  padding: 30rpx;
+  box-sizing: border-box;
+}
+.panel-li-lg {
+  flex: 0 0 33.3333%;
+	max-width: 33.3333%;
+	width: 33.3333%;
+}
+.active {
+	background: #3ac5ff;
+	color: #fff;
+}
+.bg-active {
+	background: #34ebff;
+	color: #fff;
+}
+.dog-btn {
+	position: absolute;
+	width: 40rpx;
+	height: 40rpx;
+	text-align: center;
+	line-height: 40rpx;
+	border-radius: 100%;
+	background: #3ac5ff;
+	color: #fff;
+	font-size: 22rpx;
+}
+.dog-btn:first-child {
+	left: 0;
+	top: 0;
+}
+.dog-btn:nth-child(2) {
+	right: 0;
+	top: 0;
+}
+.dog-btn:nth-child(3) {
+	left: 0;
+	bottom: 0;
+}
+.dog-btn:nth-child(4) {
+	right: 0;
+	bottom: 0;
+}
+.btn-wrapper {
+  margin-top: 50rpx;
+  padding: 0 30rpx;
+}

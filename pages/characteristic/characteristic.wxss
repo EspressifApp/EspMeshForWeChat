@@ -1,0 +1,46 @@
+.container {
+  height: 100vh;
+  padding-bottom: 26rpx;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.panel-wrapper {
+  margin-top: 26rpx;
+  border-radius: 10rpx;
+  background: #fff;
+}
+.panel-header {
+  padding: 20rpx;
+  border-bottom: 3rpx solid #f6f6f6;
+}
+.panel-content {
+  padding:  20rpx 0;
+  border-bottom: 3rpx solid #f6f6f6;
+}
+.panel-title {
+  font-weight: 600;
+}
+.panel-num {
+  padding: 0 34rpx;
+  color: #999;
+}
+.panel-footer {
+  position: relative;
+  padding: 16rpx 20rpx;
+}
+.panel-input {
+  height: 66rpx;
+  border-bottom: 3rpx solid #3ec2fc;
+}
+.icon-send,
+.icon-loop {
+  display: inline-block;
+  padding: 14rpx 18rpx;
+  font-size: 38rpx;
+  color: #fff;
+  border-radius: 10rpx;
+  background-color: #26a2ff;
+}
+.icon-loop {
+  background-color: #ef4f4f;
+}

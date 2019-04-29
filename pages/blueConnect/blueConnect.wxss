@@ -1,0 +1,71 @@
+/* pages/blueConnect/blueConnect.wxss */
+.container {
+  padding: 0;
+  height: 100vh;
+}
+.schedule {
+  background: #3ec2fc;
+  height: 44vh;
+  width: 100%;
+  padding: 40rpx 0 20rpx;
+}
+.schedule-result {
+  position: relative;
+  display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 100%;
+	background: transparent;
+	height: 55vw;
+	width: 55vw;
+	margin: 0 auto;
+	color: #fff;
+}
+.schedule-img {
+  height: 55vw;
+	width: 55vw;
+}
+.fail{
+  background: #737d89;
+}
+.desc-wrapper {
+  position: absolute;
+}
+.text-value {
+  text-align: center;
+  font-size: 20px;
+}
+.text-desc {
+  margin: 0 auto;
+  text-align: center;
+  font-size: 13px;
+}
+.text-samll {
+  font-size: 16px;
+}
+.text-sigh {
+  height: 120rpx;
+  width: 120rpx;
+  background: #d1001e;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 60rpx;
+  font-weight: bold;
+  color: #fff;
+  margin: -30rpx auto 22rpx;
+}
+.process-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+  margin-top: 20px;
+  padding-left: 30px;
+  font-size: 14px;
+  color: #999;
+}
+.text-process {
+  margin: 3px 0;
+}

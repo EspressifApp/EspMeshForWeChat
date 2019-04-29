@@ -1,0 +1,47 @@
+/* pages/setPosition/setPosition.wxss */
+.container {
+  padding: 0;
+}
+.pair {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0 20rpx 0 30rpx;
+  height: 100rpx;
+  background: #fff;
+  border-bottom: 2rpx solid rgba(168, 161, 161, 0.3);
+}
+.pair-title {
+  flex: 0 0 120rpx;
+  width: 120rpx;
+  font-size: 16px;
+}
+.pair-input {
+  flex: 1;
+  font-size: 16px;
+}
+.form-control {
+  width: 100%;
+}
+.pair-icon {
+  flex: 0 0 70rpx;
+  width: 70rpx;
+  text-align: center;
+}
+.icon-down,
+.icon-QRCode {
+  display: block;
+  font-size: 40rpx;
+  height: 100rpx;
+  line-height: 100rpx;
+  width: 100%;
+}
+.icon-QRCode {
+  font-size: 56rpx;
+}
+.btn-wrapper {
+  position: absolute;
+  bottom: 30rpx;
+  left: 10px;
+  width: calc(100% - 20px);
+}

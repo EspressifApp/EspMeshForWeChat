@@ -1,0 +1,85 @@
+<import src="/pages/template/template.wxml"/>
+<view class="container">
+  <view class="item item-lg margintop15">
+    <view class="item-icon-circle icon-lg">
+        <image mode="aspectFit" src="{{userInfo.avatarUrl}}"></image>
+    </view>
+    <view class="item-name">
+        <text>{{userInfo.nickName}}</text>
+    </view>
+    <!-- <view class="item-power-small">
+        <text class="iconfont icon-right font-lg"></text>
+    </view> -->
+  </view>
+  <view class="item margintop15">
+    <view class="item-icon">
+        <text class="iconfont icon-network1 icon-blue"></text>
+    </view>
+    <view class="item-name item-bettwen">
+        <text>网络</text>
+        <text>{{wifiName}}</text>
+    </view>
+    <view class="item-power-small">
+    </view>
+  </view>
+  <view catchtap="showAutimation" class="item margintop15">
+    <view  class="item-icon">
+        <text class="iconfont icon-association icon-green"></text>
+    </view>
+    <view class="item-name">
+        <text>设备关联</text>
+        <text class="desc">预设条件触发设备自动执行任务</text>
+    </view>
+    <view class="item-power-small">
+      <text class="iconfont icon-right font-lg"></text>
+    </view>
+  </view>
+  <view catchtap="showPosition" class="item">
+    <view class="item-icon">
+        <text class="iconfont icon-radar icon-green"></text>
+    </view>
+    <view class="item-name">
+        <text>配对</text>
+    </view>
+    <view class="item-power-small">
+      <text class="iconfont icon-right font-lg"></text>
+    </view>
+  </view>
+  <view catchtap='showTopology' class="item margintop15">
+    <view class="item-icon">
+        <text class="iconfont icon-tree icon-blue"></text>
+    </view>
+    <view class="item-name">
+        <text>拓扑结构</text>
+    </view>
+    <view class="item-power-small">
+      <text class="iconfont icon-right font-lg"></text>
+    </view>
+  </view>
+  <view catchtap='showProblem' class="item">
+  <button hidden='{{isAuthorization}}' class='authorization' type='primary' open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">
+  </button>
+    <view class="item-icon">
+        <text class="iconfont icon-feedback icon-blue"></text>
+    </view>
+    <view class="item-name">
+        <text>意见反馈</text>
+    </view>
+    <view class="item-power-small">
+      <text class="iconfont icon-right font-lg"></text>
+    </view>
+  </view>
+  <!-- <view class="item">
+    <view class="item-icon">
+        <text class="iconfont icon-problem icon-blue"></text>
+    </view>
+    <view class="item-name">
+        <text>关于我们</text>
+    </view>
+    <view class="item-power-small">
+      <text class="iconfont icon-right font-lg"></text>
+    </view>
+  </view> -->
+</view>
+
+<template is="footer"  data="{{text: 'user'}}"/>

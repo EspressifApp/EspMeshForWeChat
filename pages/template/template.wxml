@@ -1,0 +1,150 @@
+<template name="editInfo">
+  <view class='modal-mask'></view>
+  <view class='modal-dialog'>
+        <view class='modal-title'>{{title}}</view> 
+        <input type='text' bindinput="editInfoName" value='{{name}}'  placeholder="{{text}}"/>  
+        <view class='modal-btn-wrapper'>
+          <view class='cancel-btn' style='color:rgba(7,17,27,0.6)' bindtap='hideOperate'>取消</view>
+          <view class='confirm-btn' style='color:#4d9efb' bindtap='saveName'>确定</view>
+    </view>
+  </view>
+</template>
+<template name="footer">
+  <view class="footer-wrapper">
+  <navigator url="/pages/index/index" hover-class="none" open-type="redirect" class="footer-name {{text == 'index' ? 'blue' : ''}}">
+    <text class='iconfont icon-light font22'></text>
+    <text>设备</text>
+  </navigator>
+  <navigator url="/pages/group/group" hover-class="none" open-type="redirect" class="footer-name {{text == 'group' ? 'blue' : ''}}">
+    <text class='iconfont icon-group font22'></text>
+    <text>群组</text>
+  </navigator>
+  <navigator url="/pages/user/user" hover-class="none" open-type="redirect"  class="footer-name {{text == 'user' ? 'blue' : ''}}">
+    <text class='iconfont icon-user font20'></text>
+    <text>我的</text>
+  </navigator>
+</view>
+</template>
+<template name="colorPicker">
+  <view>
+    <view class="picker-change">
+        <text class="iconfont icon-loop back"></text>
+    </view>
+    <view class="color-picker">
+    </view>
+    <view class="temperature-picker">
+    </view>
+</view>
+</template>
+
+<template name="guide">
+  <view class="operate-wrapper">
+    <view class="mask"></view>
+    <view class="guide-wrapper">
+      <view class="guide-header flex flex-ac">
+        <view catchtap="hideGuideContent"  hidden="{{!isGuideContent}}" class="flex-50">
+          <text class="flex-50 guide-icon icon-rotate iconfont icon-left"></text>
+        </view>
+        <view class="flex-1">{{title}}</view>
+        <view catchtap="hideGuide" class="flex-50">
+          <text class="flex-50 guide-icon iconfont icon-close1"></text>
+        </view>
+      </view>
+      <view hidden="{{isGuideContent}}" class="guide-content">
+        <view bindtap="showGuideContent" class="guide-item" wx:key="*this" data-index="{{index}}" wx:for="{{list}}">
+          <view class="guide-item-icon">
+            <text class="iconfont {{item.icon}}"></text>
+          </view>
+          <view class="guide-item-name">
+            <text class="name">{{item.name}}</text>
+            <text class="desc">列如：{{item.desc}}</text>
+          </view>
+          <view class="guide-item-power">
+            <text class="iconfont icon-right"></text>
+          </view>
+        </view>
+      </view>
+      <view hidden="{{!isGuideContent}}" class="guide-content guide-info">
+        <view class="ready">
+          <view class="info-title">| 添加设备前准备工作</view>
+          <view wx:key="*this" wx:for="{{guide.step}}" class="info-item flex">
+            <view class="info-icon flex-50">
+              <text class="iconfont {{item.icon}}" style="font-size: 80rpx"></text>
+            </view>
+            <view class="flex-1">
+              <view>{{item.step}}</view>
+              <view>{{item.info}}</view>
+            </view>
+          </view>
+        </view>
+        <view class="problem-desc">
+          <view class="info-title desc-title">如果以上<text class="red">步骤遇到问题</text>，请尝试一下步骤复位设备</view>
+          <view wx:key="*this" wx:for="{{guide.problem}}">{{item}}</view>
+        </view>
+        <view class="prompt">温馨提示：复位后设备会处于待添加状态，需要重新入网才可以使用</view>
+      </view>
+      <view class="guide-btn">
+        <button catchtap="addDevice" class="btn">蓝牙搜索</button>
+      </view>
+    </view>
+  </view>
+</template>
+<template name="command">
+  <view class="operate-wrapper">
+    <view catchtap="commandCancel" class="mask"></view>
+    <view class="command-wrapper">
+      <view class="command-header">
+        <view>发送命令</view>
+        <view catchtap='showLoadCommand' class="command-load">Load</view>
+      </view>
+      <view hidden="{{isLoad}}" class="command-content">
+        <view class="form-textarea">
+          {{textareaJson}}
+        </view>
+        <view class="command-info">
+          <view class="command-item flex flex-ac" wx:key="*this" wx:for="{{requestList}}">
+            <input bindinput="bindViewKey" data-index="{{index}}" value="{{item.key}}" class="flex-90 property form-control"/>
+            <input bindinput="bindViewValue" data-index="{{index}}"  value="{{item.value}}" class="flex-1 value form-control"/>
+            <text data-index="{{index}}" catchtap="delCommand" class="iconfont icon-less"></text>
+          </view>
+          <view catchtap='addCommand' class="command-add">Add</view>
+          <view class="command-request flex">
+            <view catchtap="selectResponse" data-value="1" class="command-radio flex flex-ac">
+              <view class="item-radio {{selected == 1 ? 'active': ''}}">
+                <view class="item-radio-sub"></view>
+              </view>
+              <view>Response</view>
+            </view>
+            <view catchtap="selectResponse" data-value="2"  class="command-radio flex flex-ac">
+              <view class="item-radio {{selected == 2 ? 'active': ''}}">
+                <view class="item-radio-sub"></view>
+              </view>
+              <view>No Response</view>
+            </view>
+          </view>
+          <view hidden='{{resultText.length == 0}}' class="command-result form-textarea">
+            <view wx:key="*this" wx:for="{{resultText}}">{{index + 1}}.{{item}}</view>
+          </view>
+          <view class="command-btn flex">
+            <view class="flex-1 btn-info">
+              <button catchtap="commandCancel" class="btn cancel">取消</button>
+            </view>
+            <view class="flex-1 btn-info">
+              <button catchtap="sendCommand" class="btn">确定</button>
+            </view>
+          </view>
+        </view>
+      </view>
+       <view hidden="{{!isLoad}}" class="command-content">
+        <view class="" wx:key="*this" wx:for="{{commandList}}">
+          <view catchtap="selectCommand" data-index="{{index}}" class="item">
+              <view class="item-radio {{textareaJson == item ? 'active': ''}}">
+                <view class="item-radio-sub"></view>
+              </view>
+              <view class="command-radio-info"><text decode="true">&ensp;</text> {{item}}</view>
+            </view>
+        </view>
+       </view>
+    </view>
+  </view>
+</template>

@@ -1,0 +1,36 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/group/group",
+    "pages/user/user",
+    "pages/blueDevices/blueDevices",
+    "pages/blueWifi/blueWifi",
+    "pages/blueConnect/blueConnect",
+    "pages/ota/ota",
+    "pages/aboutDevice/aboutDevice",
+    "pages/aboutUs/aboutUs",
+    "pages/operateDevice/operateDevice",
+    "pages/characteristic/characteristic",
+    "pages/addGroup/addGroup",
+    "pages/positionList/positionList",
+    "pages/setPosition/setPosition",
+    "pages/topology/topology",
+    "pages/topologyInfo/topologyInfo",
+    "pages/problem/problem",
+    "pages/automation/automation",
+    "pages/automationDevices/automationDevices",
+    "pages/automationBtn/automationBtn",
+    "pages/automationBtnSelect/automationBtnSelect",
+    "pages/automationBtnDevice/automationBtnDevice",
+    "pages/btnSelectDevice/btnSelectDevice",
+    "pages/video/video"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#3ec2fc",
+    "navigationBarTitleText": "WeChat",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f6f6f6"
+  },
+  "sitemapLocation": "sitemap.json"
+}

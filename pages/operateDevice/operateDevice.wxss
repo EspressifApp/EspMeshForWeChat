@@ -1,0 +1,110 @@
+page {
+  background: #fff;
+}
+.container {
+  height: 100vh;
+  padding: 15px;
+  overflow-y: auto;
+  background: #fff;
+}
+.header-wrapper {
+  border-bottom: 1px solid #f4f4f4;
+}
+.header-icon {
+  height: 140rpx;
+  width: 140rpx;
+  line-height: 140rpx;
+  text-align: center;
+  border: 1px solid #f4f4f4;
+  border-radius: 100%;
+  margin: 20rpx auto 0;
+  background: #f6f6f6;
+}
+.header-btn-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+button::after{
+  border: none;
+  border-radius: 0;
+}
+.header-btn {
+  display: inline-block;
+  width: 45%;
+  padding: 0;
+  margin: 50rpx 0;
+  height: 75rpx;
+  font-size: 14px;
+  border: 1px solid #f4f4f4;
+  line-height: 75rpx;
+  border-radius: 50rpx;
+  background: #fff;
+  box-shadow: none;
+  transition: all .3s linear;
+}
+.color-wrapper {
+  display: flex;
+  flex-flow: wrap;
+  align-content: center;
+  margin: 30rpx 0;
+}
+.color-info {
+  flex: 0 0 25%;
+  width: 25%;
+  max-width: 25%;
+  margin-bottom: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+.activeYes {
+  color: #fff;
+}
+.color-round {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10rpx auto;
+  height: 15vw;
+  width: 15vw;
+  color: #ababab;
+  border-radius: 100%;
+  box-sizing: border-box;
+}
+.color-picker-cold {
+  background: #ababab;
+  color: #fff;
+}
+.color-picker-round {
+  border: 3px solid transparent;
+  background-clip:padding-box,border-box;
+	background-origin:padding-box,border-box;
+  background-image: linear-gradient(#fff, #fff),linear-gradient(#ff4536, #f9d535, #73f951,
+			#577cf9, #37eff9, #f965dd);
+}
+.canvas-wrapper {
+  position: relative;
+  margin-top: 50rpx;
+  padding: 0 15px;
+}
+canvas {
+  width: 100%;
+  height: 26px;
+  -webkit-tap-highlight-color:transparent;
+}
+.font40 {
+  font-size: 40px;
+}
+.move{
+  box-sizing:border-box;
+  height:28px;
+  border-radius:50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor:pointer;
+}
+.active {
+  background: #3ec2fc;
+  color: #fff;
+  border-color: #3ec2fc;
+}

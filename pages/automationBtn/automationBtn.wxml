@@ -1,0 +1,62 @@
+<view class="container">
+  <movable-area>
+    <view class="button-model flex flex-v">
+      <view id="btn-top-AB" class="btn-top flex-1 flex flex-ac flex-jcb">
+        <view class="btn-content flex-1 flex flex-ac flex-jcc">
+          <text hidden="{{deviceA.length == 0}}" class="num">{{deviceA.length}}</text>
+          <view catchtap="selectBtn" data-cid="{{btnValues.upleft}}" id="btn-content-A" class="model-round flex flex-ac flex-jcc {{(isA || eventA.length >0)?'active':''}} {{(isAB || eventUp.length >0)? 'bg-active': ''}}">A</view>
+        </view>
+        <view class="btn-content flex-1 flex flex-ac flex-jcc">
+          <text hidden="{{deviceB.length == 0}}" class="num">{{deviceB.length}}</text>
+          <view catchtap="selectBtn" data-cid="{{btnValues.upright}}" id="btn-content-B" class="model-round flex flex-ac flex-jcc {{(isB || eventB.length >0)?'active':''}} {{(isAB || eventUp.length >0)? 'bg-active': ''}}">B</view>
+        </view>
+      </view>
+      <view id="btn-bottom-CD" class="btn-bottom flex-1 flex flex-ac flex-jcb">
+        <view class="btn-content flex-1 flex flex-ac flex-jcc">
+          <text hidden="{{deviceC.length == 0}}" class="num">{{deviceC.length}}</text>
+          <view catchtap="selectBtn" data-cid="{{btnValues.downleft}}" id="btn-content-C"  class="model-round flex flex-ac flex-jcc {{(isC || eventC.length >0)?'active':''}} {{(isCD || eventDown.length >0)? 'bg-active': ''}}">C</view>
+        </view>
+        <view class="btn-content flex-1 flex flex-ac flex-jcc">
+          <text hidden="{{deviceD.length == 0}}" class="num">{{deviceD.length}}</text>
+          <view catchtap="selectBtn" data-cid="{{btnValues.downright}}" id="btn-content-D"  class="model-round flex flex-ac flex-jcc {{(isD || eventD.length >0)?'active':''}} {{(isCD || eventDown.length >0)? 'bg-active': ''}}">D</view>
+        </view>
+      </view>
+    </view>
+    <view class="panel">
+      <view class="panel-header">
+        <text hidden="{{!isMuch}}">长按(调整)</text>
+        <text hidden="{{isMuch}}">短按(调整)</text>
+      </view>
+      <view class="panel-content">
+        <view hidden="{{isMuch && index == 0}}" style="transform: {{item.isActive ? 'none' : ''}}" class="panel-li" wx:key="*this" wx:for="{{shortPress}}">
+          <view class="panel-li-info">
+          <view wx:key="*this" class="dog-btn" wx:for="{{pressList[item.id]}}">{{item}}</view>
+          {{item.name}}
+          </view>
+          <movable-view x="{{item.x}}" y="{{item.y}}" data-index="{{index}}" bindtouchmove="touchMove" bindtouchend="touchEnd" direction="all" >
+          <view data-type="{{item.id}}" data-name="{{itemName}}" catchtap="delExist" class="dog-btn" wx:for-item="itemName" wx:key="*this" wx:for="{{pressList[item.id]}}">{{itemName}}</view>
+            {{item.name}}
+          </movable-view>
+        </view>
+      </view>
+    </view>
+    <view hidden="{{isMuch}}" class="panel">
+      <view class="panel-header">长按(微调)</view>
+      <view class="panel-content">
+        <view class="panel-li panel-li-lg" wx:key="*this" wx:for="{{longPress}}">
+          <view class="panel-li-info">
+            <view wx:key="*this" class="dog-btn" wx:for="{{pressList[item.id]}}">{{item}}</view>
+            {{item.name}}
+          </view>
+          <movable-view x="{{item.x}}" y="{{item.y}}" data-index="{{index}}" bindtouchmove="touchLongMove" bindtouchend="touchLongEnd" direction="all" >
+          <view data-type="{{item.id}}" data-name="{{itemName}}" catchtap="delExist" class="dog-btn" wx:for-item="itemName" wx:key="*this" wx:for="{{pressList[item.id]}}">{{itemName}}</view>
+            {{item.name}}
+          </movable-view>
+        </view>
+      </view>
+    </view>
+  </movable-area>
+  <view class="btn-wrapper">
+    <button catchtap="save" class="btn">确定</button>
+  </view>
+</view>

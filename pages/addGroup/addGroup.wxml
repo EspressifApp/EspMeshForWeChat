@@ -1,0 +1,35 @@
+<view class="container">
+  <view class='select-wrapper'>
+    <view class="input-info">
+      <view class='input-group'>
+        <text class="iconfont icon-search"></text>
+        <input type="search" placeholder-class="input-placeholder" class="form-control search-input" bindinput="bindViewSearch" placeholder="搜索名称或位置"/>
+      </view>
+    </view>
+    
+    <view class='item-select flex flex-jce flex-ac'>
+      <view bindtap='selectAll' class="item-radio {{selected == searchList.length ? 'active' : ''}}">
+        <view class="item-radio-sub"></view>
+      </view>
+    </view>
+  </view>
+  <view class="content">
+    <view data-index="{{index}}" bindtap='bindViewSelect'  wx:for="{{searchList}}" class="item" wx:key="*this">
+      <view data-mac="{{item.mac}}" class="item-img">
+       <text class='iconfont {{item.icon}}'></text>
+      </view>
+      <view class="item-name">
+        <text class="text-name">{{item.name}}</text>
+        <text class="text-rssi">{{item.version}}</text>
+      </view>
+      <view class="item-power-radio flex flex-jce flex-ac">
+        <view class="item-radio {{item.isRadio ? 'active' : ''}}">
+        <view class="item-radio-sub"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class='btn-wrapper'>
+    <button catchtap='saveGroup' class="btn {{(selected > 0 && !isDefault) ? '': 'disabled'}}">确定</button>
+  </view>
+</view>

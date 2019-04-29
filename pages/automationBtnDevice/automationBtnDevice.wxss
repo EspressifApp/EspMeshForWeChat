@@ -1,0 +1,4 @@
+@import "/pages/blueDevices/blueDevices.wxss";
+.content {
+  height: calc(100vh - 280rpx);
+}

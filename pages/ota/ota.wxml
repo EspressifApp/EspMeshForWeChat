@@ -1,0 +1,46 @@
+<!--pages/ota/ota.wxml-->
+<view class="container">
+  <view class="section">
+    <textarea bindinput="bindViewText"placeholder="请输入固件地址" class="form-control" value="{{binUrl}}"placeholder-class="input-placeholder"/>
+  </view>
+  <view class='btn-wrapper'>
+    <button bindtap='bindViewUpgrade' class="btn {{binUrl == '' ? 'disabled': ''}}">确定</button>
+  </view>
+</view>
+<view hidden="{{!showProgress}}">
+  <view class="operate-wrapper">
+    <view class="mask"></view>
+    <view class="progress-wrapper">
+      <view class="progress-title">固件升级({{macs.length}})</view>
+      <view class="progress-info">
+        <progress active-mode="" activeColor="#ffba31" border-radius="10" percent="{{progress}}" stroke-width="10" />
+        <view class="desc flex">
+          <text class="text-first flex-1">下载</text>
+          <text class="text-center flex-1">传输</text>
+          <text class="text-right flex-1">切换</text>
+        </view>
+      </view>
+      <view class="progress-desc desc flex flex-jcb">
+        <view>设备升级中...</view>
+        <view>{{binTime}}</view>
+      </view>
+      <view class="progress-result">
+        <text hidden="{{!fail}}" class="fail">设备升级失败，请检查网络后重试</text>
+        <text hidden="{{!partialSuc}}" class="suc">部分设备升级成功</text>
+        <text hidden="{{!suc}}" class="suc">设备升级成功</text>
+      </view>
+      <view class="progress-btn-wrapper ">
+        <button hidden="{{suc || partialSuc || fail}}" class="btn" catchtap="stop">取消</button>
+        <view  hidden="{{!partialSuc && !fail}}" class="flex flex-jcb">
+          <button catchtap="bindViewUpgrade" class="ota-btn retry">重试</button>
+          <button catchtap="reboot" class="ota-btn">确定</button>
+        </view>
+        <view hidden="{{!suc}}" class="flex flex-jcb">
+          <button catchtap="hideProgrees" class="ota-btn">取消</button>
+          <button catchtap="reboot" class="ota-btn">确定</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+ 

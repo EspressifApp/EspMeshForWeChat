@@ -1,0 +1,19 @@
+/* pages/topology/topology.wxss */
+.container {
+  height: 96vh;
+  padding: 0;
+}
+.tab-info {
+  padding: 22rpx 0;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0px 0xp 2px #f6f6f6;
+  border-bottom: 3px solid #fff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap
+}
+.active {
+  color: #3ec2fc;
+  border-bottom: 3px solid #3ec2fc;
+}
