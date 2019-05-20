@@ -34,7 +34,7 @@ Page({
     if (this.data.isSave) {
       this.getSearchList();
     } else {
-      this.getBluetoothDevices(this);
+      util.getBluetoothDevices(this);
     }
   },
   sliderChanging: function (e) {
@@ -47,6 +47,7 @@ Page({
     this.setData({
       rssiValue: e.detail.value
     })
+    app.data.rssi = e.detail.value;
     this.getSearchList();
   },
   showProblem: function() {
@@ -62,7 +63,8 @@ Page({
   //选择所有
   selectAll: function() {
     var self = this,
-      list = self.data.blueList,
+      blueList = self.data.blueList,
+      list = self.data.searchList,
       flag = false, selected = 0;
     if (list.length > 0) {
       if (self.data.selected == list.length) {
@@ -73,13 +75,22 @@ Page({
         selected = list.length;
       }
       for (var i in list) {
-        list[i].active = flag;
+        var item = list[i];
+        item.active = flag;
+        for (var j in blueList) {
+          var blueItem = blueList[j];
+          if (blueItem.mac == item.mac) {
+            blueList.splice(j, 1, item);
+            break;
+          }
+        }
       }
       self.setData({
-        blueList: list,
+        blueList: blueList,
+        searchList: list,
         selected: selected
       })
-      self.getSearchList();
+      self.setTitle();
     }
   },
   //收藏
@@ -97,7 +108,7 @@ Page({
       saveScanList: list
     })
     this.setSaveScanMac();
-    this.getBluetoothDevices(this);
+    util.getBluetoothDevices(this);
   },
   //搜索
   bindViewSearch: function (e) {
@@ -108,9 +119,10 @@ Page({
   },
   bindViewSelect: function (event) {
     var self = this,
-      list = self.data.blueList,
+      list = self.data.searchList,
+      blueList = self.data.blueList,
       index = event.currentTarget.dataset.index,
-      item = self.data.blueList[index];
+      item = list[index];
     item.active = !item.active;
     if (item.active) {
       self.setData({
@@ -122,16 +134,23 @@ Page({
       })
     }
     list.splice(index, 1, item);
+    for (var i in blueList) {
+      var blueItem = blueList[i];
+      if (blueItem.mac == item.mac) {
+        blueList.splice(i, 1, item);
+        break;
+      }
+    }
     self.setData({
-      blueList: list
+      blueList: blueList
     })
     this.getSearchList();
   },
   bindViewConnect: function () {
     var self = this, whitelist = [], conMacs = [];
-    if (self.data.blueList.length > 0) {
-      for (var i in self.data.blueList) {
-        var item = self.data.blueList[i];
+    if (self.data.searchList.length > 0) {
+      for (var i in self.data.searchList) {
+        var item = self.data.searchList[i];
         if (item.active) {
           if (conMacs.indexOf(item.mac) == -1) {
             conMacs.push(item.mac);
@@ -172,7 +191,6 @@ Page({
       selected: selected
     })
     self.setTitle();
-    
   },
   setTitle: function() {
     var self = this;
@@ -261,10 +279,13 @@ Page({
       macs: macs,
       ip: ip,
       rssiValue: app.data.rssi,
-      btnTitle: btnTitle
+      btnTitle: btnTitle,
+     
     })
+    setTimeout(function() {
+      wx.hideLoading();
+    }, 30000)
     util.getBluDevice(self, true);
-    
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -281,7 +302,6 @@ Page({
     self.clearTimer();
     timerId = setInterval(function () {
       util.getBluetoothDevices(self);
-      console.log("aa");
     }, 2000);
   },
 

@@ -827,7 +827,7 @@ const setStorage = (key, data) => {
 const getBluDevice = (self, flag) => {
   openBluetoothAdapter(flag);
   wx.onBluetoothDeviceFound(function (res) {
-    
+    console.log(res);
     var list = filterDevice(res.devices, null, self.data.saveScanList, self.data.rssiValue, false);
     if (list.length > 0) {
       wx.hideLoading();
@@ -843,6 +843,7 @@ const getBluDevice = (self, flag) => {
 const getBluetoothDevices = self => {
   wx.getBluetoothDevices({
     success: function (res) {
+      console.log(res);
       var list = filterDevice(res.devices, self.data.blueList, self.data.saveScanList, self.data.rssiValue, true);
       if (list.length > 0) {
         wx.hideLoading();
@@ -864,6 +865,7 @@ const openBluetoothAdapter = () => {
     success(res) {
       wx.startBluetoothDevicesDiscovery({
         success: function (res) {
+          console.log(res);
           //self.getBluetoothDevices();
         },
         fail: function (res) {

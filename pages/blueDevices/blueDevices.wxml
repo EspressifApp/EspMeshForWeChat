@@ -86,11 +86,12 @@
       </view>
       <view class="content-info">
         <view class="info-header">添加设备时，请检查以下选项：</view>
-        <view class="info-desc">1. 设备已供电并处于待添加状态</view>
-        <view class="info-desc">2. 需要添加的设备未被其他手机添加</view>
-        <view class="info-desc">3. 尽量靠近设备,建议不超过20米</view>
-        <view class="info-desc">4. 设备没有损坏</view>
-        <view class="info-desc">5. 系统蓝牙故障(<text class="color-red">需重启</text>)</view>
+        <view class="info-desc">1. Android6.0及以上开启位置信息且微信被授予位置权限</view>
+        <view class="info-desc">2. 设备已供电并处于待添加状态</view>
+        <view class="info-desc">3. 需要添加的设备未被其他手机添加</view>
+        <view class="info-desc">4. 尽量靠近设备,建议不超过20米</view>
+        <view class="info-desc">5. 设备没有损坏</view>
+        <view class="info-desc">6. 系统蓝牙故障(<text class="color-red">需重启</text>)</view>
       </view>
       <view class="btn-wrapper">
         <button catchtap='hideProblem' class='btn'>我知道了</button>

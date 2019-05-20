@@ -492,8 +492,6 @@ Page({
         title: self.data.device.name
       });
     }
-    
-    
     // this.createRound();
   },
 
@@ -501,10 +499,13 @@ Page({
    * 生命周期函数--监听页面初次渲染完成
    */
   onReady: function () {
-    this.initCanvas();
-    this.setData({
-      list: this.data.colorList
+    var self = this;
+    self.setData({
+      list: self.data.colorList
     })
+    setTimeout(function() {
+      self.initCanvas();
+    }, 800)
   },
   
   /**

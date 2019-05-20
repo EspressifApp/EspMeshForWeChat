@@ -89,12 +89,12 @@
 }
 .item-img .item-mark {
   position: absolute;
-  top: -5px;
-  left: 22px;
+  top: -10rpx;
+  left: 46rpx;
   background: #ef4f4f;
-  width: 18px;
-  height: 18px;
-  line-height: 16px;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 36rpx;
   text-align: center;
   border-radius: 100%;
   color: #fff;
