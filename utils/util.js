@@ -27,7 +27,7 @@ const obj2key = (obj, keys) => {
 const uniqeByKeys = (array, keys) => {
   var arr = [];
   var hash = {};
-  for (var i = 0, j = array.length; i < j; i++) {
+  for (var i = 0; i < array.length; i++) {
     var k = obj2key(array[i], keys);
     if (!(k in hash)) {
       hash[k] = true;
@@ -757,17 +757,17 @@ const changeDevices = (macs, status, h, s, flag) => {
     var item = deviceList[i];
     if (macs.indexOf(item.mac) != -1) {
       var characteristics = item.characteristics;
-      for (var i in characteristics) {
-        var subItem = characteristics[i];
+      for (var j in characteristics) {
+        var subItem = characteristics[j];
         if (subItem.cid == constant.STATUS_CID && !_isEmpty(status)) {
           subItem.value = status;
-          characteristics[i] = subItem;
+          characteristics[j] = subItem;
         } else if (subItem.cid == constant.HUE_CID && !_isEmpty(h)) {
           subItem.value = h;
-          characteristics[i] = subItem;
+          characteristics[j] = subItem;
         } else if (subItem.cid == constant.SATURATION_CID && !_isEmpty(s)) {
           subItem.value = s;
-          characteristics[i] = subItem;
+          characteristics[j] = subItem;
         }
       }
       item.characteristics = characteristics;
@@ -816,6 +816,7 @@ const changeDevice = (item, status, h, s) => {
   return item;
 }
 const setStorage = (key, data) => {
+  
   if (key == constant.DEVICE_LIST) {
     data = uniqeByKeys(data, ["mac"]);
   }

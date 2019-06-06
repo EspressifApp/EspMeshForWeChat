@@ -13,8 +13,8 @@
 		"uglifyFileName": true
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.6.6",
-	"appid": "",
+	"libVersion": "2.7.0",
+	"appid": "wxafe0da83b9ce909c",
 	"projectname": "esp-mesh",
 	"debugOptions": {
 		"hidedInDevtools": []

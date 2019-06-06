@@ -75,7 +75,6 @@ Page({
     for (var i in rootMacs) {
       var rootMac = rootMacs[i],
         obj = rootInfo["'" + rootMac + "'"];
-      console.log(obj.macs);
       util.setListStatus(obj.macs, status, obj.ip);
     }
     group.active = flag;

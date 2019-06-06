@@ -354,6 +354,7 @@ Page({
       var item = list[i];
       if (item.mac == device.mac) {
         list.splice(i, 1, device);
+        break;
       }
     }
     util.setStorage(constant.DEVICE_LIST, list);
