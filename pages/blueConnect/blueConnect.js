@@ -13,6 +13,7 @@ Page({
   data: {
     blueConnectNum: 0,
     wifiConnectNum: 0,
+    isClose: false,
     failure: false,
     value: 0,
     desc: "Device connecting...",
@@ -45,8 +46,7 @@ Page({
     wx.getBluetoothDevices({
       success: function (res) {
         var deviceId = "",
-          rssi = app.data.rssi;
-        console.log(res);
+          rssi = -1200;
         var list = util.filterDevice(res.devices, null, [], rssi, false);
         console.log(list);
         for (var i in list) {
@@ -75,6 +75,7 @@ Page({
         console.log(res);
       }
     });
+    
   },
   blueConnect: function (event) {
     var self = this;
@@ -86,14 +87,21 @@ Page({
       serviceId: "",
       uuid: "",
     });
+    console.log(self.data.deviceId);
     wx.createBLEConnection({
       // 这里的 deviceId 需要已经通过 createBLEConnection 与对应设备建立链接 
       deviceId: self.data.deviceId,
       timeout: 10000,
       success: function (res) {
         self.getDeviceServices(self.data.deviceId);
+        wx.onBLEConnectionStateChange(function (res) {
+          if (!res.connected && !self.data.isClose) {
+            self.setFailProcess(true, "蓝牙连接断开");
+            }
+        })
       },
       fail: function (res) {
+        console.log(res);
         var num = self.data.blueConnectNum;
         if (num < 3) {
           self.blueConnect();
@@ -120,7 +128,6 @@ Page({
             var uuid = services[i].uuid;
             if (uuid == app.data.service_uuid) {
               self.getDeviceCharacteristics(deviceId, uuid);
-              return false;
             }
           }
         }
@@ -149,7 +156,6 @@ Page({
                 serviceId: serviceId,
                 uuid: uuid,
               })
-              return false;
             }
           }
         }
@@ -489,7 +495,7 @@ Page({
         icon: 'none',
         duration: 2000
       })
-      app.data.isInit = true;
+      app.data.isInit = 3;
       setTimeout(function () {
         wx.reLaunch({
           url: '/pages/index/index'
@@ -582,6 +588,9 @@ Page({
   },
   closeConnect: function (flag) {
     var self = this;
+    self.setData({
+      isClose: true
+    })
     wx.closeBLEConnection({
       deviceId: self.data.deviceId,
       success: function (res) {
@@ -615,6 +624,7 @@ Page({
       title: "配网"
     });
     self.setSucBg();
+    wx.openBluetoothAdapter();
     console.log(options);
     var macs = options.macs.split(",")
     self.setData({
@@ -624,8 +634,10 @@ Page({
       ssid: options.ssid,
       password: options.password,
       meshId: options.meshId,
+      deviceId: options.macRssi
     })
-    self.getBestDevice();
+    //self.getBestDevice();
+    self.blueConnect();
     self.setProcess(0, constant.descSucList[0]);
   },
   /**
@@ -645,7 +657,7 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-    this.closeConnect(false);
+    this.closeConnect(true);
     clearInterval(timeId);
     sequenceControl = 0;
   },
@@ -654,7 +666,7 @@ Page({
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-    this.closeConnect(false);
+    this.closeConnect(true);
     clearInterval(timeId);
     sequenceControl = 0;
   },

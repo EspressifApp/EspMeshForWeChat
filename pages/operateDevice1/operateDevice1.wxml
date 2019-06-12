@@ -1,0 +1,60 @@
+<view class="page">
+  <image class="imageView" lazy-load="true" src='../../images/bg.png'></image>
+  <view class="content-wrapper">
+    <view class="canvasWrap">
+      <canvas hidden='{{!currentStatus || !pickerShow}}' bindtouchstart="getColor" class="canvas" canvas-id="firstCanvas"></canvas>
+    </view>
+    <cover-view hidden='{{!pickerShow}}' class="colorInfo flex flex-jcc flex-ac {{!currentStatus ? 'black-bg':''}}" style="background: {{color}}; box-shadow: {{boxShadow}}; position: {{platform == 'ios' ? 'fixed' : 'absolute'}}">
+        <cover-image class="img-light" src="../../images/img-light.png"></cover-image>
+    </cover-view>
+    <view hidden='{{pickerShow}}' class="colorInfo flex flex-jcc flex-ac {{!currentStatus ? 'black-bg':''}}" style="background: {{color}}; box-shadow: {{boxShadow}}; position: {{platform == 'ios' ? 'fixed' : 'absolute'}}">
+        <image class="img-light" src="../../images/img-light.png"></image>
+    </view>
+    <view hidden='{{!currentStatus}}' class="slider-wrapper">
+      <view hidden='{{!pickerShow}}'>
+        <view class="slider-item">
+          <view class="slider-label flex flex-jcb">
+            <text class="label">亮度</text><text>{{currentLuminanceText}}%</text>
+          </view>
+          <slider bindchange="editDeviceL" bindchanging="changeDeviceL"  value="{{currentLuminance}}" min="0" activeColor="#fff" backgroundColor="#394a62" block-size="25" max="100"/>
+        </view>
+        <view class="slider-item">
+          <view class="slider-label flex flex-jcb">
+            <text class="label">饱和度</text><text>{{currentSaturationText}}%</text>
+          </view>
+          <slider bindchange="editDeviceS" bindchanging="changeDeviceS"  value="{{currentSaturation}}" min="0" activeColor="#fff" backgroundColor="#394a62" block-size="25" max="100"/>
+        </view>
+      </view>
+      <view hidden='{{pickerShow}}'>
+        <view class="slider-item">
+          <view class="slider-label flex flex-jcb">
+            <text class="label">亮度</text><text>{{currentBrightnessText}}%</text>
+          </view>
+          <slider bindchange="editDeviceB" bindchanging="changeDeviceB"  value="{{currentBrightness}}" min="0" activeColor="#fff" backgroundColor="#394a62" block-size="25" max="100"/>
+        </view>
+        <view class="slider-item">
+          <view class="slider-label flex flex-jcb">
+            <text class="label">冷暖</text><text>{{currentTemperatureText * 50 + 2000}}K</text>
+          </view>
+          <slider bindchange="editDeviceT" bindchanging="changeDeviceT"  value="{{currentTemperature}}" min="0" activeColor="#fff" backgroundColor="#394a62" block-size="25" max="100"/>
+        </view>
+      </view>
+    </view>
+    <view class="control-wrapper flex">
+      <view catchtap='closeDevice' class="control-item flex-1 flex flex-v flex-ac {{!currentStatus ? 'active': ''}}">
+        <text class="iconfont icon-power icon-blue"></text>
+        <text hidden='{{!currentStatus}}'>关灯</text>
+        <text hidden='{{currentStatus}}'>开灯</text>
+      </view>
+      <view catchtap='showPicker' class="control-item flex-1 flex flex-v flex-ac {{(pickerShow && currentStatus) ? 'active': ''}}">
+        <text class="iconfont icon-caiguangmoshi"></text>
+        <text>彩光</text>
+      </view>
+      <view catchtap='hidePicker' class="control-item flex-1 flex flex-v flex-ac {{(!pickerShow && currentStatus) ? 'active': ''}}">
+        <text class="iconfont icon-baiguangmoshi icon-blue"></text>
+        <text>白光</text>
+      </view>
+    </view>
+  </view>
+  
+</view>

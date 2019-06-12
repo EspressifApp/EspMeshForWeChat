@@ -55,7 +55,7 @@ Page({
     })
     if (groupInfo.isLight) {
       wx.navigateTo({
-        url: '/pages/operateDevice/operateDevice?group=' + JSON.stringify(self.data.groupInfo) + '&flag=true'
+        url: '/pages/operateDevice1/operateDevice1?group=' + JSON.stringify(self.data.groupInfo) + '&flag=true'
       })
     }
   },
@@ -185,7 +185,7 @@ Page({
         break;
       }
     }
-    util.setStorage(constant.GROUP_TABLE, groups);
+    util.setStorageSync(constant.GROUP_TABLE, groups);
     this.getGroupList();
     this.hideOperate();
   },
@@ -203,17 +203,15 @@ Page({
       content: '确定要重置设备吗?若重置设备该群组下的设备将进入配网状态。',
       success(res) {
         if (res.confirm) {
-          util.showLoading("");
+          util.showLoading("重置中...");
           var group = self.data.groupInfo,
             rootMacs = group.rootMacs,
             rootInfo = group.rootInfo,
             data = JSON.stringify({ "request": constant.RESET_DEVICE, "delay": constant.DELAY_TIME });
-          console.log(group);
           for (var i in rootMacs) {
             var rootMac = rootMacs[i],
               obj = rootInfo["'" + rootMac + "'"],
               macs = obj.macs;
-            console.log(macs);
             setTimeout(function () {
               util.setRequest(constant.DEVICE_REQUEST, data, macs.join(), macs.length, obj.ip, false, self.delSuc, "重置失败");
             }, 800);
@@ -228,16 +226,18 @@ Page({
     var deviceList = wx.getStorageSync(constant.DEVICE_LIST),
       list = [],
       macs = self.data.groupInfo.device_macs;
-    for (var i in deviceList) {
+    for (var i = 0; i < deviceList.length; i++) {
       var item = deviceList[i];
       if (macs.indexOf(item.mac) == -1) {
         list.push(item);
       }
     }
-    util.setStorage(constant.DEVICE_LIST, list);
-    self.getGroupList();
-    wx.hideLoading();
-    self.hideOperate();
+    util.setStorageSync(constant.DEVICE_LIST, list);
+    setTimeout(function() {
+      self.getGroupList();
+      wx.hideLoading();
+      self.hideOperate();
+    }, 200)
   },
   editGroup: function () {
     const self = this;
@@ -330,23 +330,28 @@ Page({
   },
   saveName: function() {
     const self = this;
-    if (util._isEmpty(self.data.groupName)) {
-      util.showToast("请输入群组名称！");
-      return false;
-    }
-    
-    if (!self.data.isEditGroup && self.data.isAddGroup) {
-      var group = self.data.groupInfo;
-      group.name = self.data.groupName;
-      util.saveGroups([group]);
-      self.getGroupList();
-    } else {
-      wx.navigateTo({
-        url: '/pages/addGroup/addGroup?groupName=' + self.data.groupName + '&flag=false'
-      })
-    }
-    self.hideAdd();
-    
+    setTimeout(function() {
+      if (util._isEmpty(self.data.groupName)) {
+        util.showToast("请输入群组名称！");
+        return false;
+      }
+      if (!self.data.isEditGroup && self.data.isAddGroup) {
+        util.showLoading("");
+        self.hideAdd();
+        setTimeout(function() {
+          var group = self.data.groupInfo;
+          group.name = self.data.groupName;
+          util.saveGroups([group]);
+          self.getGroupList();
+          wx.hideLoading();
+        }, 1000)
+      } else {
+        wx.navigateTo({
+          url: '/pages/addGroup/addGroup?groupName=' + self.data.groupName + '&flag=false'
+        })
+      }
+      self.hideAdd();
+    }, 500)
   },
   hideAdd: function() {
     this.setData({
@@ -358,7 +363,8 @@ Page({
   //处理设备列表
   getSearchList: function () {
     var searchList = [], list = this.data.groupList,
-      deviceList = wx.getStorageSync(constant.DEVICE_LIST)
+      deviceList = wx.getStorageSync(constant.DEVICE_LIST);
+    console.log("363",deviceList.length);
     if (!util._isEmpty(this.data.searchName)) {
       for (var i in list) {
         var item = list[i];
@@ -397,8 +403,8 @@ Page({
       item.count = count;
       item.rootMacs = rootMacList;
       item.rootInfo = ipObj;
-      console.log(item);
       searchList.splice(i, 1, item);
+      console.log("403", item.count);
     }
     searchList = util.sortList(searchList);
     this.setData({
@@ -418,6 +424,7 @@ Page({
       this.setData({
         groupList: groupList
       })
+      console.log(groupList);
       this.getSearchList();
     }
   },
@@ -425,7 +432,6 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    
   },
 
   /**

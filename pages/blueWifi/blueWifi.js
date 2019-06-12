@@ -13,6 +13,7 @@ Page({
     ssid: "",
     bssid: "",
     uuid: "",
+    macRssi: "",
     password: "",
   },
   initWifi: function() {
@@ -91,7 +92,7 @@ Page({
     var self = this;
     if (self.data.wifiInfo) {
       wx.navigateTo({
-        url: '/pages/blueConnect/blueConnect?macs=' + self.data.macs + "&ssid=" + self.data.wifiInfo.SSID + "&password=" + self.data.password + "&meshId=" + self.data.wifiInfo.BSSID,
+        url: '/pages/blueConnect/blueConnect?macs=' + self.data.macs + "&ssid=" + self.data.wifiInfo.SSID + "&password=" + self.data.password + "&meshId=" + self.data.wifiInfo.BSSID + "&macRssi=" + self.data.macRssi,
       })
     } else {
       wx.showToast({
@@ -111,7 +112,8 @@ Page({
       title: "确认WiFi"
     });
     self.setData({
-      macs: options.macs.split(",")
+      macs: options.macs.split(","),
+      macRssi: options.macRssi
     })
     console.log(self.data.macs)
     wx.stopBluetoothDevicesDiscovery({

@@ -15,7 +15,7 @@ Page({
     isMesh: false,
     macs: [],
     ip: "",
-    rssiValue: -80,
+    rssiValue: -100,
     isfilter: false,
     isSave: false,
     btnTitle: "下一步"
@@ -147,7 +147,8 @@ Page({
     this.getSearchList();
   },
   bindViewConnect: function () {
-    var self = this, whitelist = [], conMacs = [];
+    var self = this, whitelist = [], conMacs = [],
+      rssi = -120, macRssi = "";
     if (self.data.searchList.length > 0) {
       for (var i in self.data.searchList) {
         var item = self.data.searchList[i];
@@ -155,6 +156,9 @@ Page({
           if (conMacs.indexOf(item.mac) == -1) {
             conMacs.push(item.mac);
             whitelist.push(item.bssid);
+          }
+          if (item.RSSI >= rssi) {
+            macRssi = item.deviceId;
           }
         }
       }
@@ -165,12 +169,10 @@ Page({
         util.setRequest(constant.DEVICE_REQUEST, data, macs.join(), macs.length, self.data.ip, true, self.joinSuc);
       } else {
         wx.navigateTo({
-          url: '/pages/blueWifi/blueWifi?macs=' + conMacs,
+          url: '/pages/blueWifi/blueWifi?macs=' + conMacs + "&macRssi=" + macRssi,
         })
       }
     }
-    
-    
   },
   joinSuc: function() {
     wx.hideLoading();
@@ -262,7 +264,7 @@ Page({
   onLoad: function (options) {
     var self = this;
     self.setTitle();
-    util.showLoading('设备扫描中...');
+    util.showLoadingMask('设备扫描中...');
     var isMesh = options.flag,
       macs = [], btnTitle = "下一步", ip = "";
     if (isMesh == "true") {
@@ -284,7 +286,7 @@ Page({
     })
     setTimeout(function() {
       wx.hideLoading();
-    }, 30000)
+    }, 10000)
     util.getBluDevice(self, true);
   },
   /**

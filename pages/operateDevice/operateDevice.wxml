@@ -20,7 +20,8 @@
       </view>
       <view catchtap="changPicker" class="color-info">
         <view class="color-round {{isColor ? 'color-picker-cold' : 'color-picker-round'}}" ><text class="iconfont icon-loop font30"></text></view>
-        <text class="textcenter"></text>
+        <text hidden='{{!isColor}}' class="textcenter">白光</text>
+        <text hidden='{{isColor}}' class="textcenter">彩光</text>
       </view>
     </view>
     <view class="canvas-wrapper">

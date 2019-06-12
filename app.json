@@ -10,6 +10,7 @@
     "pages/aboutDevice/aboutDevice",
     "pages/aboutUs/aboutUs",
     "pages/operateDevice/operateDevice",
+    "pages/operateDevice1/operateDevice1",
     "pages/characteristic/characteristic",
     "pages/addGroup/addGroup",
     "pages/positionList/positionList",

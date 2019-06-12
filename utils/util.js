@@ -620,6 +620,12 @@ const showLoading = msg => {
     mask: true
   });
 }
+const showLoadingMask = msg => {
+  wx.showLoading({
+    title: msg,
+    mask: false
+  });
+}
 const showToast = msg => {
   wx.showToast({
     title: msg,
@@ -730,15 +736,15 @@ const setListLColor = (macs, characteristics, ip) => {
     var item = deviceList[i];
     if (macs.indexOf(item.mac) != -1) {
       var chars = item.characteristics;
-      for (var i in chars) {
-        var subItem = chars[i];
+      for (var k in chars) {
+        var subItem = chars[k];
         for (var j in characteristics) {
           var sub = characteristics[j];
           if (subItem.cid == sub.cid) {
             subItem.value = sub.value;
           }
         }
-        chars[i] = subItem;
+        chars[k] = subItem;
       }
       item.characteristics = chars;
       item.active = true;
@@ -825,12 +831,18 @@ const setStorage = (key, data) => {
     data: data
   })
 }
+const setStorageSync = (key, data) => {
+  if (key == constant.DEVICE_LIST) {
+    data = uniqeByKeys(data, ["mac"]);
+  }
+  wx.setStorageSync(key, data);
+}
 const getBluDevice = (self, flag) => {
   openBluetoothAdapter(flag);
   wx.onBluetoothDeviceFound(function (res) {
     console.log(res);
     var list = filterDevice(res.devices, null, self.data.saveScanList, self.data.rssiValue, false);
-    if (list.length > 0) {
+    if (list.length > 0 && flag) {
       wx.hideLoading();
     }
     self.setData({
@@ -919,7 +931,7 @@ const saveGroups = list => {
       obj[groups[i].id] = true;
     }
   }
-  setStorage(constant.GROUP_TABLE, result);
+  setStorageSync(constant.GROUP_TABLE, result);
 }
 const savePosition = obj => {
   var positions = wx.getStorageSync(constant.POSITION_LIST),
@@ -1474,6 +1486,7 @@ module.exports = {
   initData: initData,
   showToast: showToast,
   showLoading: showLoading,
+  showLoadingMask: showLoadingMask,
   setRequest: setRequest,
   setStatus: setStatus,
   setListStatus: setListStatus,
@@ -1482,6 +1495,7 @@ module.exports = {
   setLColor: setLColor,
   setListLColor: setListLColor,
   setStorage: setStorage,
+  setStorageSync: setStorageSync,
   switchTouchDefaultEvent: switchTouchDefaultEvent,
   sensorDefaultEvent: sensorDefaultEvent,
   sensor24DefaultEvent: sensor24DefaultEvent,
@@ -1513,4 +1527,4 @@ module.exports = {
   selectResponse: selectResponse,
   sendCommand: sendCommand,
   commandJson: commandJson
-}
+  }

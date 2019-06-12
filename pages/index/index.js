@@ -15,12 +15,13 @@ Page({
     isSelect: false,
     isOperate: true,
     isRefresh: false,
+    isLoading: true,
     deviceInfo: "",
     displacement: 0,
     deviceList: [],
     searchList: [],
     blueList: [],
-    rssiValue: -80,
+    rssiValue: -100,
     deviceIndex: "",
     hiddenModal: true,
     showAddDevice: false,
@@ -123,14 +124,16 @@ Page({
   noLoadDevice: function() {
     const self = this;
     wx.hideLoading();
-    
     self.hide();
     if (!self.data.showAddDevice) {
-      util.showToast('未加载到设备');
-      self.clearScanTime();
-      scanTimeId = setTimeout(function () {
-        util.getBluDevice(self, false);
-      }, 1000)
+      if (self.data.deviceList.length <= 0) {
+        util.showToast('未加载到设备');
+      }
+      setTimeout(function () {
+        self.setData({
+          isLoading: false
+        })
+      }, 2000)
     }
     setTimeout(function() {
       self.isOpenBlue();
@@ -182,10 +185,11 @@ Page({
           self.getSearchList();
           util.setStorage(constant.DEVICE_LIST, list);
           if (list.length > 0) {
-            self.clearScanTime();
-            scanTimeId = setTimeout(function() {
-              util.getBluDevice(self, false);
-            }, 10000)
+            setTimeout(function () {
+              self.setData({
+                isLoading: false
+              })
+            }, 3000)
           }
           self.setGroup();
           self.setPositions();
@@ -300,14 +304,20 @@ Page({
         self.setData({
           deviceList: [],
           searchList: [],
-        })
+          isLoading: true
+        });
         util.showLoading("设备组网中...");
         setTimeout(function() {
+          self.clearScanTime();
+          scanTimeId = setTimeout(function () {
+            util.getBluDevice(self, false);
+          }, 1000);
           self.getIP();
         }, 20000)
       }, 2000)
     } else {
       wx.hideLoading();
+      self.hideScan();
     }
   },
   showVideo: function() {
@@ -478,7 +488,7 @@ Page({
     var tid = deviceInfo.tid;
     if (tid >= constant.MIN_LIGHT && tid <= constant.MAX_LIGHT) {
       wx.navigateTo({
-        url: '/pages/operateDevice/operateDevice?device=' + JSON.stringify(self.data.deviceInfo) + '&flag=false'
+        url: '/pages/operateDevice1/operateDevice1?device=' + JSON.stringify(self.data.deviceInfo) + '&flag=false'
       })
     } else if(tid != constant.BUTTON_SWITCH) {
       wx.navigateTo({
@@ -542,15 +552,14 @@ Page({
   },
   //判断蓝牙是否打开
   isOpenBlue: function() {
-    wx.closeBluetoothAdapter({
-      success: function () {
-      }
-    });
-    wx.openBluetoothAdapter({
+    wx.getBluetoothAdapterState({
       success: function (res) {
+        console.log(res);
+        if (!res.available) {
+          util.showToast('请打开蓝牙');
+        }
       },
       fail: function (res) {
-        util.showToast('请打开蓝牙');
       }
     })
   },
@@ -580,7 +589,6 @@ Page({
       }
     }
     var deviceList = self.data.deviceList;
-    console.log(deviceList);
     for (var i in deviceList) {
       macs = [];
       var item = deviceList[i];
@@ -725,13 +733,19 @@ Page({
     wx.setNavigationBarTitle({
       title: "设备"
     });
-    if (app.data.isInit) {
+    if (app.data.isInit == 1) {
       util.showLoading("设备加载中...");
+      self.setData({
+        isLoading: true
+      })
       self.getIP();
-      app.data.isInit = false;
-    } else {
+      app.data.isInit = 2;
+    } else if (app.data.isInit == 2){
       var list = wx.getStorageSync(constant.DEVICE_LIST);
       var showAddDevice = false;
+      self.setData({
+        isLoading: false
+      })
       if (util._isEmpty(list) || list.length == 0) {
         list = [];
         showAddDevice = true;
@@ -741,11 +755,21 @@ Page({
         showAddDevice: showAddDevice
       })
       self.getSearchList();
-      self.clearScanTime();
-      scanTimeId = setTimeout(function() {
-        util.getBluDevice(self, false);
-      }, 10000)
+    } else if(app.data.isInit == 3) {
+      util.showLoading("设备组网中...");
+      self.setData({
+        isLoading: true
+      })
+      setTimeout(function(){
+        self.getIP();
+      }, 5000)
+      app.data.isInit = 2;
     }
+    self.clearScanTime();
+    scanTimeId = setTimeout(function () {
+      console.log("aa");
+      util.getBluDevice(self, false);
+    }, 1000);
   },
   /**
    * 生命周期函数--监听页面隐藏
@@ -758,19 +782,34 @@ Page({
     this.clearScanTime();
   },
   /**
+   * 生命周期函数--监听页面卸载
+   */
+  onUnload: function () {
+    util.closeBluetoothAdapter();
+    this.setData({
+      blueList: []
+    })
+    this.clearScanTime();
+  },
+  /**
    * 页面相关事件处理函数--监听用户下拉动作
    */
   onPullDownRefresh: function () {
     const self = this;
     util.closeBluetoothAdapter();
+    self.clearScanTime();
     wx.stopPullDownRefresh();
     self.setData({
       isRefresh: true,
       deviceList: [],
       searchList: [],
       blueList: [],
+      isLoading: true
     })
     self.getIP();
     util.showLoading("设备加载中...");
+    scanTimeId = setTimeout(function () {
+      util.getBluDevice(self, false);
+    }, 1000);
   },
 })

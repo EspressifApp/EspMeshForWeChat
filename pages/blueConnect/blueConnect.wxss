@@ -30,6 +30,10 @@
 }
 .desc-wrapper {
   position: absolute;
+  top: 35%;
+  left: 10%;
+  width: 80%;
+  text-align: center;
 }
 .text-value {
   text-align: center;
