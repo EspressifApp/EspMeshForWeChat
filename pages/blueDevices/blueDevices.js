@@ -3,7 +3,6 @@
 const app = getApp();
 const util = require('../../utils/util.js');
 const constant = require('../../utils/constant.js');
-var timerId = "";
 Page({
   data: {
     blueList: [],
@@ -254,13 +253,6 @@ Page({
     })
     this.setSelected();
   },
-  clearTimer: function() {
-    if (!util._isEmpty(timerId)) {
-      console.log(timerId);
-      clearInterval(timerId);
-      timerId = "";
-    }
-  },
   onLoad: function (options) {
     var self = this;
     self.setTitle();
@@ -287,7 +279,7 @@ Page({
     setTimeout(function() {
       wx.hideLoading();
     }, 10000)
-    util.getBluDevice(self, true);
+    util.getBluDevice(self, true); 
   },
   /**
    * 生命周期函数--监听页面初次渲染完成
@@ -301,24 +293,18 @@ Page({
    */
   onShow: function () {
     const self = this;
-    self.clearTimer();
-    timerId = setInterval(function () {
-      util.getBluetoothDevices(self);
-    }, 2000);
   },
 
   /**
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-    this.clearTimer();
   },
 
   /**
    * 生命周期函数--监听页面卸载
    */
   onUnload: function () {
-    this.clearTimer();
   },
 
   /**

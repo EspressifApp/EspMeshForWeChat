@@ -19,6 +19,7 @@ Page({
     oldFloor: "",
     oldArea: "",
     oldCode: "",
+    oldMac: "",
     mac: "",
     flag: true,
     isEdit: false,
@@ -102,7 +103,6 @@ Page({
       util.showToast("请输入MAC地址");
       return false;
     }
-    util.showToast("验证通过");
     if (self.data.isEdit) {
       if (self._isEditExist(self.data.code) && self._isCodeExist(self.data.code)) {
         util.showToast("输入的编号在选中的楼层区域中已存在"); 
@@ -114,40 +114,43 @@ Page({
         return false;
       }
     }
-    var isDevice = false;
-    if (!self.data.flag) {
-      if (self._isExist(self.data.mac)) {
-        util.showToast("输入的MAC已存在"); 
-        return false;
-      }
-      var list = wx.getStorageSync(constant.DEVICE_LIST);
-      for(var i in list) {
-        var item = list[i];
-        if (item.mac == self.data.mac) {
-          isDevice = true;
-          self.setData({
-            device: item
-          })
-          break;
-        }
-      }
+    if (self._isExist(self.data.mac)) {
+      util.showToast("输入的MAC已存在");
+      return false;
     }
-    
-    if (self.data.flag || isDevice) {
-      var position = self.data.floor + "-" + self.data.area + "-" + self.data.code,
-        device = self.data.device,
-        macs = [device.mac];
-      device.position = position;
-      self.setData({
-        device: device
-      })
-      var data = data = '{"request": "' + constant.SET_POSITION + '",' + '"position":"' + position + '"}}';
-      util.showLoading("");
-      util.setRequest(constant.DEVICE_REQUEST, data, macs.join(), macs.length, device.ip, true, self.setSuc, "设置失败");
+    if (self.data.mac != self.data.oldMac && self.data.isEdit) {
+      if (self.isDeviceExist(self.data.oldMac, true)) {
+        var device = self.data.device;
+        self.setRequestPair("", [device.mac], device.ip, self.setNewPosition, "设置失败");
+      }
     } else {
-      util.showLoading("");
-      self.setPosition();
+      self.setNewPosition();
     }
+  },
+  isDeviceExist: function (mac, flag) {
+    const self = this;
+    var isDevice = false;
+    var list = wx.getStorageSync(constant.DEVICE_LIST);
+    for (var i in list) {
+      var item = list[i];
+      if (item.mac == mac) {
+        isDevice = true;
+        self.setData({
+          device: item
+        })
+        if (flag) {
+          item.position = "";
+          list.splice(i, 1, item);
+          util.setStorage(constant.DEVICE_LIST, list);
+        }
+        break;
+      }
+    }
+    return isDevice;
+  },
+  setRequestPair: function (position, macs, ip, fun, desc) {
+    var data = '{"request": "' + constant.SET_POSITION + '",' + '"position":"' + position + '"}}';
+    util.setRequest(constant.DEVICE_REQUEST, data, macs.join(), macs.length, ip, true, fun, desc);
   },
   setSuc: function() {
     const self = this;
@@ -162,11 +165,38 @@ Page({
     this.setPosition();
     util.setStorage(constant.DEVICE_LIST, list);
   },
+  setNewPosition: function() {
+    const self = this;
+    var position = self.data.floor + "-" + self.data.area + "-" + self.data.code;
+    if (self.isDeviceExist(self.data.mac, false)) {
+      var device = self.data.device,
+        macs = [device.mac];
+      device.position = position;
+      self.setData({
+        device: device
+      })
+      util.showLoading("");
+      self.setRequestPair(position, macs, device.ip, self.setSuc, "设置失败");
+    } else {
+      util.showLoading("");
+      self.setPosition();
+    }
+  },
   setPosition: function() {
     const self = this;
     var data = {
       "mac": self.data.mac, "code": self.data.code, "floor": self.data.floor, "area": self.data.area
     };
+    if (self.data.mac != self.data.oldMac) {
+      var positions = wx.getStorageSync(constant.POSITION_LIST);
+      for (var i = 0; i < positions.length; i++) {
+        if (positions[i].mac == self.data.oldMac) {
+          positions.splice(i, 1);
+          break;
+        }
+      }
+      util.setStorageSync(constant.POSITION_LIST, positions);
+    }
     util.savePosition(data);
     setTimeout(function () {
       wx.hideLoading();
@@ -210,8 +240,6 @@ Page({
     var device = options.device,
       positionInfo = options.position,
       floorIndex = 0, floor = "1F", areaIndex = 0, area = "A", code = "001", mac = "", oldFloor = "", oldArea = "", oldCode = "", isEdit = false, flag = true;
-    console.log(device);
-    console.log(positionInfo);
     if (!util._isEmpty(device)) {
       device = JSON.parse(device);
       mac = device.mac;
@@ -226,7 +254,6 @@ Page({
         isEdit = true;
       }
     } else if (!util._isEmpty(positionInfo)) {
-      
       positionInfo = JSON.parse(positionInfo);
       mac = positionInfo.mac;
       floor = oldFloor = positionInfo.floor;
@@ -236,17 +263,21 @@ Page({
       areaIndex = this.data.areaArray.indexOf(area);
       isEdit = true;
     }
+    if (options.flag == "true") {
+      flag = true;
+    } else {
+      flag = false;
+    }
     var btnTitle = "下一个";
     if (options.flag == "true" || isEdit) {
       btnTitle = "确定";
-    } else {
-      flag = false;
     }
     this.setData({
       flag: flag,
       device: device,
       isEdit: isEdit,
       mac: mac,
+      oldMac: mac,
       floorIndex: floorIndex,
       floor: floor,
       areaIndex: areaIndex,
@@ -264,7 +295,7 @@ Page({
       positionList = wx.getStorageSync(constant.POSITION_LIST);
     for (var i in positionList) {
       var item = positionList[i];
-      if (item.mac == mac) {
+      if (item.mac == mac && mac != self.data.oldMac) {
         flag = true;
         break;
       }

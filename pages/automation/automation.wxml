@@ -8,7 +8,7 @@
   </view>
   </view>
   <view class="content">
-    <view data-index="{{index}}" bindtap='bindViewSelect'  wx:for="{{deviceList}}" class="item" wx:key="*this">
+    <view data-index="{{index}}" bindtap='bindViewSelect'  wx:for="{{deviceList}}" class="item" wx:key="{{item.mac}}">
       <view class="item-img">
        <text class='bluetooth-img iconfont icon-light' mode='aspectFit'></text>
       </view>

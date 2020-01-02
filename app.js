@@ -7,7 +7,7 @@ App({
     name: "BLUFI",
     md5Key: "",
     isInit: 1,
-    rssi: -100,
+    rssi: -120,
     ip: "",
     port: "",
   },
@@ -25,6 +25,7 @@ App({
     })
   },
   globalData: {
-    userInfo: null
+    userInfo: null,
+    udp: ""
   }
 })

@@ -1,5 +1,8 @@
 const app = getApp();
 const constant = require('constant.js');
+var timeId = "";
+var macList = [];
+const timeOut = 7;
 //时间格式
 const formatTime = date => {
   const year = date.getFullYear()
@@ -66,42 +69,46 @@ const hexCharCodeToStr = hexCharCodeStr => {
 }
 //过滤名称
 const filterDevice = (devices, deviceList, saveScanList, rssiValue, flag) => {
-  var self = this, list = [];
+  const self = this;
+  var list = [], ids = [];
   for (var i = 0; i < devices.length; i++) {
     var device = devices[i];
-    var advertisData = ab2hex(device.advertisData);
-    
-    if (advertisData.length > 13
-//    && (advertisData[0] & 0xff) == (manufactureId & 0xff)
-//    && (advertisData[1] & 0xff) == ((manufactureId >> 8) & 0xff)
-      && advertisData[2] == "4d"
-      && advertisData[3] == "44"
-      && advertisData[4] == "46" && device.RSSI >= rssiValue) {
-      if (!_isEmpty(deviceList) && deviceList.length > 0) {
-        for (var j in deviceList) {
-          var item = deviceList[j];
-          if (item.deviceId == device.deviceId) {
-            device.active = item.active;
+    if (ids.indexOf(device.deviceId) == -1) {
+      ids.push(device.deviceId);
+      var advertisData = ab2hex(device.advertisData);
+
+      if (advertisData.length > 13
+        //    && (advertisData[0] & 0xff) == (manufactureId & 0xff)
+        //    && (advertisData[1] & 0xff) == ((manufactureId >> 8) & 0xff)
+        && advertisData[2] == "4d"
+        && advertisData[3] == "44"
+        && advertisData[4] == "46" && device.RSSI >= rssiValue) {
+        if (!_isEmpty(deviceList) && deviceList.length > 0) {
+          for (var j in deviceList) {
+            var item = deviceList[j];
+            if (item.deviceId == device.deviceId) {
+              device.active = item.active;
+            }
+          }
+        } else {
+          device.active = true;
+        }
+        device.version = advertisData[5] & 3;
+        device.onlyBeacon = ((advertisData[5] >> 4) & 1) == 1;
+        device.mac = advertisData[6] + ":" + advertisData[7] + ":" + advertisData[8] + ":" + advertisData[9] + ":" + advertisData[10] + ":" + advertisData[11];
+        device.bssid = advertisData[6] + advertisData[7] + advertisData[8] + advertisData[9] + advertisData[10] + advertisData[11] + "";
+        device.tid = parseInt(advertisData[12], 16) | (parseInt(advertisData[13], 16) << 8);
+        device.icon = getIcon(device.tid);
+
+        if (flag) {
+          if (saveScanList.indexOf(device.mac) != -1) {
+            device.isSave = true;
+          } else {
+            device.isSave = false;
           }
         }
-      } else {
-        device.active = true;
+        list.push(device);
       }
-      device.version = advertisData[5] & 3;
-      device.onlyBeacon = ((advertisData[5] >> 4) & 1) == 1;
-      device.mac = advertisData[6] + ":" + advertisData[7] + ":" + advertisData[8] + ":" + advertisData[9] + ":" + advertisData[10] + ":" + advertisData[11];
-      device.bssid = advertisData[6] + advertisData[7] + advertisData[8] + advertisData[9]  + advertisData[10] + advertisData[11] + "";
-      device.tid = parseInt(advertisData[12], 16) | (parseInt(advertisData[13], 16) << 8);
-      device.icon = getIcon(device.tid);
-      
-      if (flag) {
-        if (saveScanList.indexOf(device.mac) != -1) {
-          device.isSave = true;
-        } else {
-          device.isSave = false;
-        }
-      }
-      list.push(device);
     }
   }
   return list;
@@ -355,7 +362,7 @@ const isEncrypt = (self, fragNum, list, md5Key) => {
     } else {//分包
       list = list.slice(6);
     }
-    list = util.uint8ArrayToArray(this.blueAesDecrypt(aesjs, md5Key, iv, new Uint8Array(list)));
+    list = uint8ArrayToArray(this.blueAesDecrypt(aesjs, md5Key, iv, new Uint8Array(list)));
   } else {//返回数据未加密
     if (fragNum[6] == "1") {
       var len = list.length - 2;
@@ -442,9 +449,247 @@ const caluCRC = (crc, pByte) => {
   }
   return (~crc) & 0xffff;
 }
+// mdns 扫描
+const getDeviceByMdns = (self) => {
+  macList = [];
+  self.setData({
+    showAddDevice: false,
+    showSelect: false,
+  })
+  wx.removeStorageSync(constant.DEVICE_LIST);
+  wx.stopLocalServiceDiscovery();
+  setTimeout(function () {
+    wx.startLocalServiceDiscovery({
+      // 当前手机所连的局域网下有一个 _http._tcp. 类型的服务
+      serviceType: constant.SERVICE_TYPE,
+      success: function (re) {
+        console.log(re);
+        wx.offLocalServiceFound();
+        wx.onLocalServiceFound(function (res) {
+          console.log(res);
+          var rootMac = "",
+            arr = ab2hex(res.attributes.mac);
+          for (var i = 0; i < arr.length; i++) {
+            rootMac += hexCharCodeToStr(arr[i]);
+          }
+          getMacs(self, res.ip, rootMac, true);
+          setTimeout(function () {
+            wx.offLocalServiceFound();
+          }, 10000)
+        });
+        wx.offLocalServiceDiscoveryStop();
+      },
+      fail: function (res) {
+        console.log(res);
+      }
+    })
+  }, 2000)
+}
+var macList = [];
+// udp扫描
+const getDeviceByUdp = (self) => {
+  console.log("dasdsads");
+  macList = [];
+  wx.removeStorageSync(constant.DEVICE_LIST);
+  setTimeout(function () {
+    if (_isEmpty(app.globalData.udp)) {
+      const udp = wx.createUDPSocket()
+      udp.bind(constant.STATUS_PORT)
+      app.globalData.udp = udp
+      udp.onError(function (res) {
+        console.log("508:", res)
+      })
+      udp.onMessage(function (res) {
+        var arr = ab2hex(res.message);
+        var str = "";
+        for (var i = 0; i < arr.length; i++) {
+          str += hexCharCodeToStr(arr[i]);
+        }
+        arr = str.split(" ")
+        if (arr.length > 0 && arr[0] == constant.ESP32) {
+          var mac = arr[2];
+          if (macList.indexOf(mac) == -1) {
+            macList.push(mac);
+            console.log(mac);
+            getMacs(self, res.remoteInfo.address, mac, false);
+          }
+        }
+      })
+    }
+    app.globalData.udp.send({
+      address: constant.MESH_UDP,
+      port: constant.MESH_PORT,
+      message: constant.MESH_MSG
+    })
+  }, 1000)
+}
+//扫描/连接超时
+const onTimeout = (self, num, title, flag) => {
+  timeId = setInterval(function () {
+    if (num < timeOut) {
+      num++;
+    } else {
+      clearInterval(timeId);
+      noLoadDevice(self);
+      if (flag) {
+        wx.offLocalServiceDiscoveryStop();
+      }
+    }
+  }, 1000)
+}
+//获取Mac的集合
+const getMacs = (self, ip, rootMac, flag) => {
+  console.log('http://' + ip + ':80' + constant.MESH_INFO);
+  wx.request({
+    url: 'http://' + ip + ':80' + constant.MESH_INFO,
+    data: {
+    },
+    header: {
+      'content-type': 'application/json' // 默认值
+    },
+    success(res) {
+      console.log(res);
+      if (res.data.status_code == 0) {
+        clearInterval(timeId);
+        var macs = res.header[constant.HEADER_MAC];
+        if (!_isEmpty(macs)) {
+          macs = macs.split(",")
+          var newMacs = [];
+          for (var i = 0; i < macs.length; i++) {
+            var mac = macs[i];
+            if (macList.indexOf(macs[i]) == -1) {
+              macList.push(mac);
+              newMacs.push(mac);
+            }
+          }
+          console.log(newMacs.join(","));
+          if (newMacs.length > 0) {
+            getDevices(self, ip, newMacs.length, newMacs.join(","), rootMac, flag);
+          }
+        }
+      } else {
+        if (flag) {
+          wx.stopLocalServiceDiscovery();
+        }
+        noLoadDevice(self);
+      }
+    },
+    fail: function (res) {
+      if (flag) {
+        wx.stopLocalServiceDiscovery();
+      }
+      self.hide();
+      noLoadDevice(self);
+    }
+  })
+}
+// 未加载到设备
+const noLoadDevice = (self) => {
+  wx.hideLoading();
+  self.hide();
+  if (!self.data.showAddDevice) {
+    if (self.data.deviceList.length <= 0) {
+      showToast('未加载到设备');
+    }
+    setTimeout(function () {
+      self.setData({
+        isLoading: false
+      })
+    }, 2000)
+  }
+  var showAddDevice = false;
+  if (self.data.deviceList.length == 0) {
+    showAddDevice = true;
+  }
+  self.setData({
+    showAddDevice: showAddDevice,
+    showSelect: true,
+    isRefresh: false,
+  })
+}
+//获取mesh设备详情
+const getDevices = (self, ip, num, macs, rootMac, flag) => {
+  var data = JSON.stringify({ "request": constant.GET_DEVICE_INFO });
+  wx.request({
+    method: "POST",
+    url: "http://" + ip + ":80" + constant.DEVICE_REQUEST,
+    data: data,
+    header: {
+      "Content-Length": data.length,
+      "content-type": "application/json", // 默认值
+      "Mesh-Node-Mac": macs,
+      "Mesh-Node-Num": num,
+    },
+    success: function (res) {
+      var data = res.data;
+      console.log(res);
+      if (flag) {
+        wx.stopLocalServiceDiscovery();
+      }
+      if (!_isEmpty(data)) {
+        var list = initData(data, num, macs, ip, rootMac);
+        var showAddDevice = false;
+        if (list.length == 0) {
+          showAddDevice = true;
+        }
+        var deviceList = self.data.deviceList;
+        var existMacs = [];
+        for (var i = 0; i < deviceList.length; i++) {
+          var mac = deviceList[i].mac;
+          if (existMacs.indexOf(mac) == -1) {
+            existMacs.push(mac);
+          }
+        }
+        for (var i = 0; i < list.length; i++) {
+          var item = list[i];
+          if (existMacs.indexOf(item.mac) == -1) {
+            deviceList.push(item);
+          }
+        }
+        self.hide();
+        self.setData({
+          deviceList: deviceList,
+          isSelect: false,
+          showAddDevice: showAddDevice,
+          isRefresh: false,
+          blueList: [],
+        })
+        self.getSearchList();
+        setStorage(constant.DEVICE_LIST, list);
+        if (list.length > 0) {
+          setTimeout(function () {
+            self.setData({
+              isLoading: false
+            })
+          }, 3000)
+        }
+        self.setGroup();
+        self.setPositions();
+      }
+      wx.hideLoading();
+    },
+    fail: function (res) {
+      wx.stopLocalServiceDiscovery();
+      noLoadDevice(self);
+    }
+  })
+}
+//判断蓝牙是否打开
+const isOpenBlue = () => {
+  wx.getBluetoothAdapterState({
+    success: function (res) {
+      console.log(res);
+      if (!res.available) {
+        // showToast('请打开蓝牙');
+      }
+    },
+    fail: function (res) {
+    }
+  })
+}
 const initData = (data, num, macs, ip, rootMac) => {
   var list = [];
-  if (num >= 2) {
+  if (num >= 2 && !_isEmpty(data)) {
     data = data.split("Content-Type: application/json");
     data.splice(0, 1);
     for (var i in data) {
@@ -469,6 +714,9 @@ const initData = (data, num, macs, ip, rootMac) => {
       list.push(obj);
     }
   } else {
+    if (typeof data == "string") {
+      data = changeJSON(data)
+    }
     var ch = initCharacteristics(data.characteristics, data.tid, false);
     data.characteristics = ch.list;
     data.active = ch.active;
@@ -492,7 +740,10 @@ const analysis = str => {
   }
   var strs = str.split("\r\n\r\n");
   var mac = strs[0].split("\r\n")[1].split(":")[1];
-  var obj = JSON.parse(strs[1]);
+  var obj = "";
+  if (typeof strs[1] == "string") {
+    obj = changeJSON(strs[1])
+  }
   obj.mac = mac.replace(/^\s+|\s+$/g, "");
   return obj;
 }
@@ -501,23 +752,23 @@ const initCharacteristics = (data, tid, flag)=> {
     hueValue = 0, saturation = 0, luminance = 0, status = 0, rgb = "#6b6b6b",
     mode = 0, temperature = 0, brightness = 0;
   if (tid >= constant.MIN_LIGHT && tid <= constant.MAX_LIGHT) {
-    for (var i in data) {
+    for (var i = 0; i < data.length; i++) {
       var item = data[i];
       list.push(item);
       if (item.cid == constant.HUE_CID) {
-        hueValue = item.value;
+        hueValue = isOnlyNum(item.value);
       } else if (item.cid == constant.SATURATION_CID) {
-        saturation = item.value;
+        saturation = isOnlyNum(item.value);
       } else if (item.cid == constant.VALUE_CID) {
-        luminance = item.value;
+        luminance = isOnlyNum(item.value);
       } else if (item.cid == constant.STATUS_CID) {
-        status = item.value;
+        status = isOnlyNum(item.value);
       } else if (item.cid == constant.MODE_CID) {
-        mode = item.value;
+        mode = isOnlyNum(item.value);
       } else if (item.cid == constant.TEMPERATURE_CID) {
-        temperature = item.value;
+        temperature = isOnlyNum(item.value);
       } else if (item.cid == constant.BRIGHTNESS_CID) {
-        brightness = item.value;
+        brightness = isOnlyNum(item.value);
       }
     }
   }
@@ -538,6 +789,34 @@ const initCharacteristics = (data, tid, flag)=> {
     list = data;
   }
   return { "list": list, "active": active, "rgba": rgb};
+}
+const changeJSON = obj => {
+  try {
+    obj = JSON.parse(obj);
+    
+  } catch (e) {
+    wx.showModal({
+      title: '系统提示',
+      content: '获取到的设备详情JSON格式有误，请更新MDF。 现对数据特殊处理后显示',
+      success(res) {
+        if (res.confirm) {
+          
+        } else if (res.cancel) {
+        }
+      }
+    })
+    var reg = /\:([^\s\}\]\,\"\[\{]+)\s*/gi;
+    obj = obj.replace(reg, ":\"$1\"");
+    obj = JSON.parse(obj);
+  }
+  return obj
+}
+const isOnlyNum = str => {
+  var re = /^\d+$/;
+  if (re.test(str)) {
+    return parseInt(str)
+  }
+  return str;
 }
 const modeFun = (temperature, brightness) => {
   var r = 0,
@@ -838,15 +1117,36 @@ const setStorageSync = (key, data) => {
   wx.setStorageSync(key, data);
 }
 const getBluDevice = (self, flag) => {
-  openBluetoothAdapter(flag);
+  startBluetoothDevicesDiscovery();
   wx.onBluetoothDeviceFound(function (res) {
-    console.log(res);
     var list = filterDevice(res.devices, null, self.data.saveScanList, self.data.rssiValue, false);
     if (list.length > 0 && flag) {
       wx.hideLoading();
     }
+    console.log(list);
+    if (flag) {
+      var blueList = self.data.blueList;
+      if (blueList.length > 0) {
+        for (var i = 0; i < list.length; i++) {
+          var item = list[i];
+          var flagThis = true;
+          for (var j = 0; j < blueList.length; j++) {
+            var bssid = blueList[j].bssid;
+            if (bssid == item.bssid) {
+              blueList.splice(j, 1, item);
+              flagThis = false;
+              break;
+            }
+          }
+          if (flagThis) {
+            blueList.push(item);
+          }
+        }
+        list = blueList
+      }
+    }
     self.setData({
-      blueList: self.data.blueList.concat(list),
+      blueList: list,
     });
     if (list.length > 0 && flag) {
       self.getSearchList();
@@ -873,26 +1173,57 @@ const getBluetoothDevices = self => {
     }
   });
 }
-const openBluetoothAdapter = () => {
+// 初始化蓝牙模块
+const openBluetoothAdapter = (self) => {
   wx.openBluetoothAdapter({
     success(res) {
-      wx.startBluetoothDevicesDiscovery({
-        success: function (res) {
-          console.log(res);
-          //self.getBluetoothDevices();
-        },
-        fail: function (res) {
-          wx.hideLoading();
-          wx.showToast({
-            title: '请打开蓝牙',
-            icon: 'none',
-            duration: 2000
-          });
-        }
+      startBluetoothDevicesDiscovery();
+    },
+    fail(res) {
+      //showToast('请打开蓝牙');
+      self.setData({
+        isBlueFail: true
       })
     }
   })
 }
+// 开始搜寻附近的蓝牙外围设备
+const startBluetoothDevicesDiscovery = () => {
+  wx.startBluetoothDevicesDiscovery({
+    allowDuplicatesKey: true,
+    interval: 3000,
+    success: function (res) {
+      console.log(res);
+    },
+    fail: function (res) {
+      wx.hideLoading();
+      //showToast('请打开蓝牙');
+    }
+  })
+}
+// 停止搜寻附近的蓝牙外围设备
+const stopBluetoothDevicesDiscovery = () => {
+  wx.stopBluetoothDevicesDiscovery();
+}
+// 监听蓝牙适配器状态变化事件
+const onBluetoothAdapterStateChange = (self) => {
+  wx.onBluetoothAdapterStateChange(function (res) {
+    self.setData({
+      isBlueFail: !res.available
+    })
+    console.log('adapterState changed, now is', res)
+  })
+}
+// 监听wifi变化事件
+const onNetworkStatusChange = (self) => {
+  wx.onNetworkStatusChange(function (res){
+    console.log(res);
+    self.setData({
+      isWifiFail: !res.isConnected
+    })
+  })
+}
+// 关闭蓝牙适配
 const closeBluetoothAdapter = () => {
   wx.closeBluetoothAdapter({
     success(res) {
@@ -950,7 +1281,7 @@ const savePosition = obj => {
   if (flag) {
     positions.push(obj);
   }
-  setStorage(constant.POSITION_LIST, positions);
+  setStorageSync(constant.POSITION_LIST, positions);
 }
 const setName = tid => {
   var name = "";
@@ -999,10 +1330,10 @@ const switchTouchDefaultEvent = (parentMac, childMacs, ip, fun) => {
 const sensorDefaultEvent = (parentMac, childMacs, ip, fun) => {
   var splitMac = parentMac.substr((parentMac.length - 3), 3);
   var events = [];
-  var eventON = _assemblyOtherEvent(ON_EN + "_" + splitMac, constant.SENSOR_CID,
+  var eventON = _assemblyOtherEvent(constant.ON_EN + "_" + splitMac, constant.SENSOR_CID,
     childMacs, constant.MESH_SENSOR_ON_COMPARE, constant.STATUS_ON);
   events.push(eventON);
-  var eventOFF = _assemblyOtherEvent(OFF_EN + "_" + splitMac, constant.SENSOR_CID,
+  var eventOFF = _assemblyOtherEvent(constant.OFF_EN + "_" + splitMac, constant.SENSOR_CID,
     childMacs, constant.MESH_SENSOR_OFF_COMPARE, constant.STATUS_OFF);
   events.push(eventOFF);
   _addRequestEvent(parentMac, events, ip, fun);
@@ -1483,6 +1814,8 @@ module.exports = {
   isEncrypt: isEncrypt,
   caluCRC: caluCRC,
   encrypt: encrypt,
+  getDeviceByMdns: getDeviceByMdns,
+  getDeviceByUdp: getDeviceByUdp,
   initData: initData,
   showToast: showToast,
   showLoading: showLoading,
@@ -1526,5 +1859,9 @@ module.exports = {
   commandCancel: commandCancel,
   selectResponse: selectResponse,
   sendCommand: sendCommand,
-  commandJson: commandJson
+  commandJson: commandJson,
+  onTimeout: onTimeout,
+  onBluetoothAdapterStateChange: onBluetoothAdapterStateChange,
+  stopBluetoothDevicesDiscovery: stopBluetoothDevicesDiscovery,
+  onNetworkStatusChange: onNetworkStatusChange
   }

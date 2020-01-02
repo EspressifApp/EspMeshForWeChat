@@ -549,5 +549,56 @@ page {
 	-webkit-transform: translate3d(0, 0, 0);
 	transform: translate3d(0, 0, 0);
 }
+.icon-position {
+  position: relative;
+}
+.prompt-info{
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  padding: 0 0 10rpx 0;
+  font-size: 28rpx;
+  border-radius: 10rpx;
+  width: 80%;
+  max-width: 1000rpx;
+  overflow: hidden;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  background: #fff;
+}
+.prompt-header {
+  padding: 60rpx 30rpx;
+  text-align: center;
+  font-size: 112rpx;
+  background: #f5f5f5;
+}
+.prompt-header .icon-problem {
+    position: absolute;
+    font-size: 60rpx;
+    bottom: 0;
+    right: -12rpx;
+    color: #d1001e;
+    background: #fff;
+    border-radius: 100%;
+}
+.prompt-content {
+  padding: 30rpx 40rpx;
+}
+.prompt-content .title {
+  margin: 15px 0;
+  font-size: 32rpx;
+  font-weight: 600;
+  text-align: left !important;
+}
+.prompt-ul {
+    margin-bottom: 40rpx;
+    color: #595959;
+}
+.prompt-item {
+    line-height: 46rpx;
+}
+.prompt-content .result-flex {
+    margin-top: 40rpx;
+}
 
 

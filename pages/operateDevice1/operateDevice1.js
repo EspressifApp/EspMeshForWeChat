@@ -413,31 +413,39 @@ Page({
         })
       },
     })
+    const eventChannel = self.getOpenerEventChannel()
     var flag = options.flag;
     if (flag == "true") {
       flag = true;
-      var group = JSON.parse(options.group);
-      this.setData({
-        group: group,
-        isGroup: flag,
-        currentStatus: group.active,
-        isOne: group.active,
+      eventChannel.on('acceptData', function (data) {
+        var group = data.data;
+        self.setData({
+          group: group,
+          isGroup: flag,
+          currentStatus: group.active,
+          isOne: group.active,
+        })
+        wx.setNavigationBarTitle({
+          title: self.data.group.name
+        });
       })
-      wx.setNavigationBarTitle({
-        title: self.data.group.name
-      });
+      
     } else {
       flag = false;
-      var device = JSON.parse(options.device);
-      this.setData({
-        device: device,
-        isGroup: flag,
-        currentStatus: device.active,
-        isOne: device.active,
+      eventChannel.on('acceptData', function (data) {
+        var device = data.data;
+        console.log(device)
+        self.setData({
+          device: device,
+          isGroup: flag,
+          currentStatus: device.active,
+          isOne: device.active,
+        })
+        wx.setNavigationBarTitle({
+          title: self.data.device.name
+        });
       })
-      wx.setNavigationBarTitle({
-        title: self.data.device.name
-      });
+      
     }
     self.initColor();
   },

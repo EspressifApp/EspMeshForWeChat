@@ -3,10 +3,7 @@
 const app = getApp();
 const util = require('../../utils/util.js');
 const constant = require('../../utils/constant.js');
-const header_mac = "Mesh-Node-Mac";
-const header_num = "Mesh-Node-Num";
-const timeOut = 5;
-var timeId = "";
+
 var scanTimeId = "";
 Page({
   data: {
@@ -30,7 +27,10 @@ Page({
     deviceName: "",
     searchName: "",
     showSelect: true,
-    
+    isBlueFail: false,
+    isShowBlueFail: false,
+    isWifiFail: false,
+    isShowWifiFail: false,
     modelData: {
       title: "编辑设备名称",
       text: "输入新的设备名称",
@@ -51,155 +51,14 @@ Page({
       resultText: []
     }
   },
-  //获取根节点IP
-  getIP: function () {
-    const self = this;
-    self.setData({
-      showAddDevice: false,
-      showSelect: false,
-    })
-    wx.removeStorageSync(constant.DEVICE_LIST);
-    wx.stopLocalServiceDiscovery();
-    setTimeout(function () {
-      wx.startLocalServiceDiscovery({
-        // 当前手机所连的局域网下有一个 _http._tcp. 类型的服务
-        serviceType: constant.SERVICE_TYPE,
-        success: function (re) {
-          console.log(re);
-          wx.offLocalServiceFound();
-          self.onTimeout(0, "未加载到设备！", true)
-          wx.onLocalServiceFound(function (res) {
-            console.log(res);
-            var rootMac = "",
-              arr = util.ab2hex(res.attributes.mac);
-            for (var i = 0; i < arr.length; i++) {
-              rootMac += util.hexCharCodeToStr(arr[i]);
-            }
-            self.getMacs(res.ip, rootMac);
-            setTimeout(function () {
-              wx.offLocalServiceFound();
-            }, 10000)
-          });
-          wx.offLocalServiceDiscoveryStop();
-          wx.onLocalServiceDiscoveryStop(function(res) {
-            wx.hideLoading();
-            if (self.data.deviceList.length <= 0) {
-              self.noLoadDevice();
-            }
-          })
-        },
-        fail: function (res) {
-          console.log(res);
-          self.noLoadDevice();
-        }
-      })
-    }, 2000)
-  },
-  //获取Mac的集合
-  getMacs: function (ip, rootMac) {
-    var self = this;
-    wx.request({
-      url: 'http://' + ip + ':80' + constant.MESH_INFO,
-      data: {
-      },
-      header: {
-        'content-type': 'application/json' // 默认值
-      },
-      success(res1) {
-        if (res1.data.status_code == 0) {
-          clearInterval(timeId);
-          self.getDevices(ip, res1.header[header_num], res1.header[header_mac], rootMac);
-        } else {
-          wx.stopLocalServiceDiscovery();
-          self.noLoadDevice();
-        }
-      },
-      fail: function (res) {
-        wx.stopLocalServiceDiscovery()
-        self.hide();
-        self.noLoadDevice();
-      }
+  showBlueFail: function() {
+    this.setData({
+      isShowBlueFail: true
     })
   },
-  noLoadDevice: function() {
-    const self = this;
-    wx.hideLoading();
-    self.hide();
-    if (!self.data.showAddDevice) {
-      if (self.data.deviceList.length <= 0) {
-        util.showToast('未加载到设备');
-      }
-      setTimeout(function () {
-        self.setData({
-          isLoading: false
-        })
-      }, 2000)
-    }
-    setTimeout(function() {
-      self.isOpenBlue();
-    }, 5000)
-    var showAddDevice = false;
-    if (self.data.deviceList.length == 0) {
-      showAddDevice = true;
-    }
-    self.setData({
-      showAddDevice: showAddDevice,
-      showSelect: true,
-      isRefresh: false,
-    })
-  },
-  //获取mesh设备详情
-  getDevices: function (ip, num, macs, rootMac) {
-    var self = this;
-    var data = JSON.stringify({ "request": constant.GET_DEVICE_INFO});
-    wx.request({
-      method: "POST",
-      url: "http://" + ip + ":80" + constant.DEVICE_REQUEST,
-      data: data,
-      header: {
-        "Content-Length": data.length,
-        "content-type": "application/json", // 默认值
-        "Mesh-Node-Mac": macs,
-        "Mesh-Node-Num": num,
-      },
-      success: function (res) {
-        var data = res.data;
-        setTimeout(function () {
-          self.isOpenBlue();
-        }, 5000)
-        wx.stopLocalServiceDiscovery();
-        if (!util._isEmpty(data)) {
-          var list = util.initData(data, num, macs, ip, rootMac);
-          var showAddDevice = false;
-          if (list.length == 0) {
-            showAddDevice = true;
-          }
-          self.hide();
-          self.setData({
-            deviceList: list,
-            isSelect: false,
-            showAddDevice: showAddDevice,
-            isRefresh: false,
-            blueList: [],
-          })
-          self.getSearchList();
-          util.setStorage(constant.DEVICE_LIST, list);
-          if (list.length > 0) {
-            setTimeout(function () {
-              self.setData({
-                isLoading: false
-              })
-            }, 3000)
-          }
-          self.setGroup();
-          self.setPositions();
-        }
-        wx.hideLoading();
-      },
-      fail: function (res) {
-        wx.stopLocalServiceDiscovery();
-        self.noLoadDevice();
-      }
+  showWifiFail: function () {
+    this.setData({
+      isShowWifiFail: true
     })
   },
   //搜索
@@ -312,7 +171,8 @@ Page({
           scanTimeId = setTimeout(function () {
             util.getBluDevice(self, false);
           }, 1000);
-          self.getIP();
+          util.getDeviceByMdns(self);
+          util.getDeviceByUdp(self);
         }, 20000)
       }, 2000)
     } else {
@@ -488,7 +348,12 @@ Page({
     var tid = deviceInfo.tid;
     if (tid >= constant.MIN_LIGHT && tid <= constant.MAX_LIGHT) {
       wx.navigateTo({
-        url: '/pages/operateDevice1/operateDevice1?device=' + JSON.stringify(self.data.deviceInfo) + '&flag=false'
+        url: '/pages/operateDevice1/operateDevice1?flag=false',
+        success: function (res) {
+          // 通过eventChannel向被打开页面传送数据
+          res.eventChannel.emit('acceptData', {
+            data: self.data.deviceInfo })
+        }
       })
     } else if(tid != constant.BUTTON_SWITCH) {
       wx.navigateTo({
@@ -523,6 +388,8 @@ Page({
     this.setData({
       isOperate: true,
       hiddenModal: true,
+      isShowBlueFail: false,
+      isShowWifiFail: false
     })
   },
   //分享
@@ -549,34 +416,6 @@ Page({
     this.setData({
       searchList: searchList
     })
-  },
-  //判断蓝牙是否打开
-  isOpenBlue: function() {
-    wx.getBluetoothAdapterState({
-      success: function (res) {
-        console.log(res);
-        if (!res.available) {
-          util.showToast('请打开蓝牙');
-        }
-      },
-      fail: function (res) {
-      }
-    })
-  },
-  //扫描/连接超时
-  onTimeout: function (num, title, flag) {
-    const self = this;
-    timeId = setInterval(function () {
-      if (num < timeOut) {
-        num++;
-      } else {
-        clearInterval(timeId);
-        self.noLoadDevice();
-        if (flag) {
-          wx.offLocalServiceDiscoveryStop();
-        }
-      }
-    }, 1000)
   },
   setGroup: function () {
     var self = this, tidList = [], meshList = [], meshMacs = [], macs = [], name = "", list = [],
@@ -671,7 +510,7 @@ Page({
     self.setData({
       blueList: []
     })
-    util.closeBluetoothAdapter();
+    util.stopBluetoothDevicesDiscovery();
     self.clearScanTime();
     scanTimeId = setTimeout(function() {
       util.getBluDevice(self, false);
@@ -722,23 +561,25 @@ Page({
     this.hideScan();
   },
   onLoad: function () {
-
+    util.openBluetoothAdapter(this);
+    util.onNetworkStatusChange(this)
   },
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
     const self = this;
-    util.closeBluetoothAdapter();
     wx.setNavigationBarTitle({
       title: "设备"
     });
     if (app.data.isInit == 1) {
       util.showLoading("设备加载中...");
+      util.onTimeout(self, 0, "未加载到设备！", true);
       self.setData({
         isLoading: true
       })
-      self.getIP();
+      util.getDeviceByMdns(self);
+      // util.getDeviceByUdp(self);
       app.data.isInit = 2;
     } else if (app.data.isInit == 2){
       var list = wx.getStorageSync(constant.DEVICE_LIST);
@@ -761,21 +602,23 @@ Page({
         isLoading: true
       })
       setTimeout(function(){
-        self.getIP();
+        util.getDeviceByMdns(self);
+        // util.getDeviceByUdp(self);
       }, 5000)
       app.data.isInit = 2;
     }
     self.clearScanTime();
     scanTimeId = setTimeout(function () {
-      console.log("aa");
       util.getBluDevice(self, false);
+      util.onBluetoothAdapterStateChange(self)
     }, 1000);
+    
   },
   /**
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-    util.closeBluetoothAdapter();
+    util.stopBluetoothDevicesDiscovery();
     this.setData({
       blueList: []
     })
@@ -796,7 +639,7 @@ Page({
    */
   onPullDownRefresh: function () {
     const self = this;
-    util.closeBluetoothAdapter();
+    util.stopBluetoothDevicesDiscovery();
     self.clearScanTime();
     wx.stopPullDownRefresh();
     self.setData({
@@ -806,8 +649,10 @@ Page({
       blueList: [],
       isLoading: true
     })
-    self.getIP();
     util.showLoading("设备加载中...");
+    util.onTimeout(self, 0, "未加载到设备！", true);
+    util.getDeviceByMdns(self);
+    // util.getDeviceByUdp(self);
     scanTimeId = setTimeout(function () {
       util.getBluDevice(self, false);
     }, 1000);

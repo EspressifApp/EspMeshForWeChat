@@ -142,6 +142,13 @@ const GUIDE = [{ "icon": "icon-light", "name": "灯具类", "desc": "吸顶灯�
 const DELAY_TIME = 3000;
 const BUTTON_DEVICES = { "upleft": 0, "upright": 1, "downleft": 2, "downright": 3 };
 const MESH_VIDEO = "http://demo.iot.espressif.cn:8887/app/video/mesh-light.mp4";
+const MESH_PORT = 1025;
+const STATUS_PORT = 3232;
+const MESH_UDP = "255.255.255.255";
+const MESH_MSG = "Are You Espressif IOT Smart Device?";
+const ESP32 = "ESP32";
+const HEADER_MAC = "Mesh-Node-Mac";
+const HEADER_NUM = "Mesh-Node-Num";
 module.exports = {
   DH_P: DH_P,
   DH_G: DH_G,
@@ -267,5 +274,12 @@ module.exports = {
   GUIDE: GUIDE,
   DELAY_TIME: DELAY_TIME,
   BUTTON_DEVICES: BUTTON_DEVICES,
-  MESH_VIDEO: MESH_VIDEO
+  MESH_VIDEO: MESH_VIDEO,
+  MESH_PORT: MESH_PORT,
+  STATUS_PORT: STATUS_PORT,
+  MESH_UDP: MESH_UDP,
+  MESH_MSG: MESH_MSG,
+  ESP32: ESP32,
+  HEADER_MAC: HEADER_MAC,
+  HEADER_NUM: HEADER_NUM
 }

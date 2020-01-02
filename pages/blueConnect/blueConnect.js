@@ -9,6 +9,7 @@ const timeOut = 30;//超时时间
 var timeId = "";
 var sequenceControl = 0;
 var sequenceNumber = -1;
+var client = "";
 Page({
   data: {
     blueConnectNum: 0,
@@ -169,10 +170,7 @@ Page({
   notifyDevice: function (deviceId, serviceId, characteristicId) {
     var self = this;
     self.setProcess(35, constant.descSucList[3]);
-    var client = util.blueDH(constant.DH_P, constant.DH_G, crypto);
-    self.setData({
-      client: client
-    });
+    client = util.blueDH(constant.DH_P, constant.DH_G, crypto);
     var kBytes = util.uint8ArrayToArray(client.getPublicKey());
     var pBytes = util.hexByInt(constant.DH_P);
     var gBytes = util.hexByInt(constant.DH_G);
@@ -193,14 +191,14 @@ Page({
       characteristicId: characteristicId,
       value: typedArray.buffer,
       success: function (res) {
-        self.getSecret(deviceId, serviceId, characteristicId, client, kBytes, pBytes, gBytes, null);
+        self.getSecret(deviceId, serviceId, characteristicId, kBytes, pBytes, gBytes, null);
       },
       fail: function (res) {
         self.setFailProcess(true, constant.descFailList[3]);
       }
     })
   },
-  getSecret: function (deviceId, serviceId, characteristicId, client, kBytes, pBytes, gBytes, data) {
+  getSecret: function (deviceId, serviceId, characteristicId, kBytes, pBytes, gBytes, data) {
     var self = this, obj = [], frameControl = 0;
     sequenceControl = parseInt(sequenceControl) + 1;
     if (!util._isEmpty(data)) {
@@ -240,7 +238,7 @@ Page({
       value: typedArray.buffer,
       success: function (res) {
         if (obj.flag) {
-          self.getSecret(deviceId, serviceId, characteristicId, client, kBytes, pBytes, gBytes, obj.laveData);
+          self.getSecret(deviceId, serviceId, characteristicId, kBytes, pBytes, gBytes, obj.laveData);
         }
       },
       fail: function (res) {
@@ -570,7 +568,7 @@ Page({
           }
         } else if (subType == constant.SUBTYPE_NEGOTIATION_NEG) {
           var arr = util.hexByInt(result.join(""));
-          var clientSecret = self.data.client.computeSecret(new Uint8Array(arr));
+          var clientSecret = client.computeSecret(new Uint8Array(arr));
           var md5Key = md5.array(clientSecret);
           app.data.md5Key = md5Key;
           self.setData({

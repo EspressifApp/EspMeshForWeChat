@@ -55,7 +55,13 @@ Page({
     })
     if (groupInfo.isLight) {
       wx.navigateTo({
-        url: '/pages/operateDevice1/operateDevice1?group=' + JSON.stringify(self.data.groupInfo) + '&flag=true'
+        url: '/pages/operateDevice1/operateDevice1?flag=true',
+        success: function (res) {
+          // 通过eventChannel向被打开页面传送数据
+          res.eventChannel.emit('acceptData', {
+            data: self.data.groupInfo
+          })
+        }
       })
     }
   },

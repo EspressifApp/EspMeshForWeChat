@@ -10,6 +10,8 @@ Page({
   data: {
     showAddPosition: false,
     positionList: [],
+    delMac: "",
+    delIndex: -1,
     startX: 0, //开始坐标
     startY: 0,
     isMove: false
@@ -98,6 +100,10 @@ Page({
   //删除事件
   del: function (e) {
     const self = this;
+    self.setData({
+      delMac: "",
+      delIndex: -1
+    })
     wx.showModal({
       title: '删除',
       confirmColor: "#3ec2fc",
@@ -109,23 +115,41 @@ Page({
             index = e.currentTarget.dataset.index,
             position = positionList[index];
           util.showLoading("");
+          var isDevice = false;
           for (var i in deviceList) {
             var item = deviceList[i];
             if (item.mac == position.mac) {
+              isDevice = true;
               var data = '{"request": "' + constant.SET_POSITION + '",' + '"position":""}}';
               var macs = [item.mac];
-              util.setRequest(constant.DEVICE_REQUEST, data, macs.join(), macs.length, item.ip, true, "", "", true);
+              util.setRequest(constant.DEVICE_REQUEST, data, macs.join(), macs.length, item.ip, true, self.setSuc, "删除失败", true);
               break;
             }
           }
-          setTimeout(function () {
+          self.setData({
+            delMac: position.mac,
+            delIndex: index
+          })
+          if (!isDevice) {
             self.removePosition(positionList, index);
-            wx.hideLoading();
-          }, 1500)
+          }
         }
       }
     })
-    
+  },
+  setSuc: function() {
+    const self = this;
+    var list = wx.getStorageSync(constant.DEVICE_LIST);
+    for (var i in list) {
+      var item = list[i];
+      if (item.mac == self.data.delMac) {
+        item.position = "";
+        list.splice(i, 1, item);
+        break;
+      }
+    }
+    util.setStorage(constant.DEVICE_LIST, list);
+    self.removePosition(self.data.positionList, self.data.delIndex);
   },
   removePosition: function (positionList, index) {
     positionList.splice(index, 1);
@@ -133,6 +157,9 @@ Page({
       positionList: positionList
     })
     util.setStorage(constant.POSITION_LIST, positionList)
+    setTimeout(function () {
+      wx.hideLoading();
+    }, 500)
   },
   removeDelBtn: function () {
     var positionList = this.data.positionList;
@@ -165,14 +192,16 @@ Page({
   onShow: function () {
     var positionList = wx.getStorageSync(constant.POSITION_LIST),
       showAddPosition = false;
-    positionList = util.sortList(positionList);
-    console.log(positionList);
     if (positionList.length == 0) {
       showAddPosition = true;
     }
     for (var i in positionList) {
-      positionList[i].isTouchMove = false;
+      var item = positionList[i];
+      item.isTouchMove = false;
+      item.position = item.floor + "-" + item.area + "-" +  item.code;
+      positionList.splice(i, 1, item);
     }
+    positionList = util.sortList(positionList);
     this.setData({
       positionList: positionList,
       showAddPosition: showAddPosition

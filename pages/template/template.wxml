@@ -148,3 +148,29 @@
     </view>
   </view>
 </template>
+<template name="bluetooth">
+  <view class="operate-wrapper">
+    <view catchtap="hide" class="mask"></view>
+    <view class="prompt-info">
+      <view class="prompt-header">
+          <view>
+            <text class="iconfont icon-bluetooth icon-position">
+              <text class="iconfont icon-problem"></text>
+            </text>
+          </view>
+      </view>
+      <view class="prompt-content">
+        <view class="title">未发现设备？可能存在以下问题：</view>
+        <view class="prompt-ul">
+            <view class="prompt-item">1. 系统蓝牙未开启</view>
+            <view>2. 系统蓝牙故障</view>
+            <view>3. Android 6.0及以上版本定位未开启</view>
+        </view>
+        <view>如果排除了以上选项，问题依然没有解决，请尝试重启手机</view>
+        <view class="result-flex">
+          <button catchtap="hide" class="btn register-btn">我知道了</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>

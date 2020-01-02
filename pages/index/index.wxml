@@ -1,12 +1,23 @@
 <import src="/pages/template/template.wxml"/>
 <view class="container">
-  <view hidden="{{!showAddDevice}}">
-    <view catchtap='showGuide' class="notice" hidden="{{blueList.length == 0 || isLoading}}">
-      <text class="iconfont icon-notice"></text>
-      <text>发现新设备，请点击添加</text>
-      <text catchtap='hideScan' class="iconfont icon-close notice-close"></text>
+  <view class="notice-wrap">
+    <view catchtap="showBlueFail" hidden="{{!isBlueFail}}" class="notice-blue">
+      <text class="iconfont icon-bluetooth"></text>
+      <text>蓝牙不可用</text>
+    </view>
+    <view hidden="{{!isWifiFail}}" class="notice-blue">
+      <text class="iconfont icon-wifi"></text>
+      <text>WiFi不可用</text>
+    </view>
+    <view hidden="{{!showAddDevice}}">
+      <view catchtap='showGuide' class="notice" hidden="{{blueList.length == 0 || isLoading}}">
+        <text class="iconfont icon-notice"></text>
+        <text>发现新设备，请点击添加</text>
+        <text catchtap='hideScan' class="iconfont icon-close notice-close"></text>
+      </view>
     </view>
   </view>
+  
   <view class="input-info">
     <view class='input-group'>
       <text class="iconfont icon-search"></text>
@@ -62,6 +73,9 @@
 </view>
 <view hidden="{{!isCommand}}">
   <template is="command" data="{{...commandData}}"/>
+</view>
+<view hidden="{{!isShowBlueFail}}">
+  <template is="bluetooth"/>
 </view>
 <view hidden="{{deviceList.length == 0}}">
   <view class="operate-wrapper  {{blueList.length == 0 ? 'moves-enter-active' : 'moves-enter'}}">
